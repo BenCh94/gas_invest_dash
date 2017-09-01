@@ -4,6 +4,7 @@ from investment_data import current_stocks, crypto_currencies
 
 
 def get_live_prices():
+    invest_data = {}
     stock_names = []
     currency_names = []
     for investments in current_stocks:
@@ -26,4 +27,7 @@ def get_live_prices():
         stock_live['live_price'] = live_price
         live_prices.append(stock_live)
 
-    return live_prices
+    invest_data['crypto'] = ether_price
+    invest_data['stocks'] = live_prices
+
+    return invest_data
