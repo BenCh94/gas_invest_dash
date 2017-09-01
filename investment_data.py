@@ -2,6 +2,7 @@
 current_stocks = [
     {
         "name": "Disney",
+        "ticker": "DIS",
         "amount_usd": "109.99",
         "fees_usd": "2.99",
         "type": "Shares",
@@ -11,6 +12,7 @@ current_stocks = [
     },
     {
         "name": "Snap",
+        "ticker": "SNAP",
         "amount_usd": "50",
         "fees_usd": "2.99",
         "type": "Shares",
@@ -20,6 +22,7 @@ current_stocks = [
     },
     {
         "name": "Arena",
+        "ticker": "ARNA",
         "amount_usd": "4.2",
         "fees_usd": "2.99",
         "type": "Shares",
@@ -29,6 +32,7 @@ current_stocks = [
     },
     {
         "name": "Under Armour",
+        "ticker": "UAA",
         "amount_usd": "32.83",
         "fees_usd": "3.98",
         "type": "Shares",
@@ -38,6 +42,7 @@ current_stocks = [
     },
     {
         "name": "FitBit",
+        "ticker": "FIT",
         "amount_usd": "100",
         "fees_usd": "2.99",
         "type": "Shares",
@@ -47,6 +52,7 @@ current_stocks = [
     },
     {
         "name": "Twitter",
+        "ticker": "TWTR",
         "amount_usd": "97.01",
         "fees_usd": "2.99",
         "type": "Shares",
@@ -56,6 +62,7 @@ current_stocks = [
     },
     {
         "name": "TakeTwo",
+        "ticker": "TTWO",
         "amount_usd": "54",
         "fees_usd": "2.99",
         "type": "Shares",

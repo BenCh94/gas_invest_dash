@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Gas Dashboard</title>
+</head>
+<body>
+    {% for share in shares %}
+        <h3>{{ share.name }}</h3>
+        <p>{{ share.ticker }}</p>
+        <h2>{{ share.live_price }}</h2>
+    {% endfor %}
+</body>
+</html>
