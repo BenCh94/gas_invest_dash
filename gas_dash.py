@@ -1,5 +1,5 @@
 from flask import Flask, render_template
-from get_live_data_yahoo import get_live_prices
+from get_live_data import get_live_prices
 
 app = Flask(__name__)
 

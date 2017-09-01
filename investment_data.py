@@ -72,3 +72,16 @@ current_stocks = [
     }
 ]
 
+crypto_currencies = [
+    {
+        "name": "Ether",
+        "ticker": "ETH",
+        "amount_usd": "11.87",
+        "gty": "0.0268",
+        "fees_usd": "1.18",
+        "type": "crypto",
+        "start_date": "01/09/2017",
+        "next_review": "11/03/2018"
+    }
+]
+

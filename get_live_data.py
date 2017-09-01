@@ -1,14 +1,20 @@
 from google_finance.client import GoogleFinanceClient
-from investment_data import current_stocks
+from coinmarketcap import Market
+from investment_data import current_stocks, crypto_currencies
 
 
 def get_live_prices():
     stock_names = []
+    currency_names = []
     for investments in current_stocks:
         stock_names.append(investments['ticker'])
+    for currency in crypto_currencies:
+        cur_tick = currency['ticker']
+        currency_names.append(cur_tick)
     live_prices = []
     share_data = GoogleFinanceClient.get_stock(tickers=stock_names)
-    print share_data
+    crypto_currency_data = Market()
+    ether_price = crypto_currency_data.ticker(currency="Ethereum", convert="EUR")
 
     for stock in current_stocks:
         stock_live = {}
