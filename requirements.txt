@@ -1,0 +1,16 @@
+blinker==1.4
+click==6.7
+Flask==0.12.2
+Flask-Mail==0.9.1
+itsdangerous==0.24
+Jinja2==2.9.6
+MarkupSafe==1.0
+numpy==1.13.1
+pandas==0.20.3
+python-dateutil==2.6.1
+pytz==2017.2
+simplejson==3.11.1
+six==1.10.0
+Werkzeug==0.12.2
+wheel==0.24.0
+yahoo-finance==1.4.0
