@@ -5,7 +5,6 @@ click==6.7
 coinmarketcap==3.0.1
 Flask==0.12.2
 Flask-Mail==0.9.1
-google-finance==0.1.0
 idna==2.6
 itsdangerous==0.24
 Jinja2==2.9.6
