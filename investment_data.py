@@ -78,6 +78,11 @@ current_stocks = {
         "provider": "DriveWealth",
         "start_date": "30/01/2017",
         "next_review": "14/01/2018"
+    },
+    "sandp":
+    {
+        "name": "S and P 500",
+        "ticker": "INX"
     }
 }
 

@@ -5,11 +5,8 @@
     <title>Gas Dashboard</title>
 </head>
 <body>
-    {% for share in shares %}
-        <h3>Stcck: {{ share.name }}</h3><p>Ticker: {{ share.ticker }}</p><h2>Price: {{ share.live_price }}</h2>
-    {% endfor %}
-    {% for crypt in cryptos %}
-        <h3> {{ crypt.name }}</h3><h2>{{ crypt.price_usd }}</h2>
-    {% endfor %}
+ {% for share in shares %}
+    <h3>{{ share.name }}</h3>
+ {% endfor %}
 </body>
 </html>
