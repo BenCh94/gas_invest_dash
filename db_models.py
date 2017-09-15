@@ -8,7 +8,6 @@ class HistoricalData(db.EmbeddedDocument):
 class Share(db.Document):
     name = db.StringField()
     quantity = db.IntField()
-    average_price_usd = db.Intfield()
     ticker = db.StringField()
     amount_usd = db.IntField()
     fees_usd = db.IntField()
@@ -20,3 +19,7 @@ class Share(db.Document):
 
 class Crypto(db.Document):
     name = db.StringField()
+    ticker = db.StringField()
+    amount_usd = db.Intfield()
+    quantity = db.Intfield()
+    meta = {'collections': 'cryptos'}
