@@ -9,3 +9,4 @@ def get_live_prices():
     invest_data['crypto'] = ether_price
 
     return invest_data
+
