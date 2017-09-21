@@ -20,6 +20,6 @@ class Share(db.Document):
 class Crypto(db.Document):
     name = db.StringField()
     ticker = db.StringField()
-    amount_usd = db.Intfield()
-    quantity = db.Intfield()
+    amount_usd = db.IntField()
+    quantity = db.IntField()
     meta = {'collections': 'cryptos'}

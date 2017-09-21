@@ -3,6 +3,7 @@ from flask_mongoengine import MongoEngine
 from get_live_data import get_live_prices
 from stock_data import get_stock_data
 from flask_mongoengine.wtf import model_form
+from flask_wtf.csrf import CSRFProtect
 import db_models
 import os
 
@@ -16,6 +17,8 @@ app.config['MONGODB_SETTINGS'] = {
     'password': os.environ.get('mongo_password')
 }
 db = MongoEngine(app)
+csrf = CSRFProtect(app)
+app.secret_key = os.environ.get('secret_key')
 
 
 @app.route('/')
@@ -38,6 +41,12 @@ def share_page(share_name):
     data = get_stock_data(share_name)
 
     return data
+
+
+@app.route('/cryptos')
+def get_crypto_prices():
+
+    return str(get_live_prices())
 
 
 if __name__ == '__main__':
