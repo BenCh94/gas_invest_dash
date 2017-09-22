@@ -1,7 +1,6 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect
 from flask_mongoengine import MongoEngine
 from get_live_data import get_live_prices
-from stock_data import get_stock_data
 from flask_mongoengine.wtf import model_form
 from flask_wtf.csrf import CSRFProtect
 import db_models
@@ -24,23 +23,28 @@ app.secret_key = os.environ.get('secret_key')
 @app.route('/')
 def hello_dash():
     shares = db_models.Share.objects()
-    print shares
 
     return render_template('home_dash.html', shares=shares)
 
 
-@app.route('/add_share')
+@app.route('/add_investment')
 def add_share():
     ShareForm = model_form(db_models.Share)
     form = ShareForm()
+    if request.method == 'POST' and form.validate():
+        share = db_models.Share()
+        share_to_add = form.populate_obj(share)
+        if share_to_add.save():
+            redirect('add_success.html')
     return render_template('add_share.html', form=form)
 
 
 @app.route('/shares/<share_name>')
 def share_page(share_name):
-    data = get_stock_data(share_name)
+    name = str(share_name)
+    data = db_models.Share.objects.get_or_404(name=name)
 
-    return data
+    return str(data)
 
 
 @app.route('/cryptos')

@@ -3,17 +3,18 @@ from gas_dash import db
 
 class HistoricalData(db.EmbeddedDocument):
     daily_data = db.DictField()
+    last_update = db.DateTimeField()
 
 
 class Share(db.Document):
     name = db.StringField()
-    quantity = db.IntField()
+    quantity = db.DecimalField()
     ticker = db.StringField()
-    amount_usd = db.IntField()
-    fees_usd = db.IntField()
+    amount_usd = db.DecimalField()
+    fees_usd = db.DecimalField()
     provider = db.StringField()
     start_date = db.DateTimeField()
-    historical_data = db.EmbeddedDocumentField(HistoricalData)
+    historical = db.EmbeddedDocumentField(HistoricalData)
     meta = {'collection': 'shares'}
 
 

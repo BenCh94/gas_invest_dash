@@ -1,13 +1,29 @@
 {% extends 'base.html' %}
 {% block content %}
-
-    <form method="post">
-        {{ form.csrf_token }}
-        <h2>Share Name </h2>{{ form.name }}
-        <h3>Ticker </h3>{{ form.ticker }}
-        <h3>Quantity Purchased </h3>{{ form.quantity }}
-        <h3>Date Purchased </h3>{{ form.start_date }}
-    <button class="btn btn-primary">Submit</button>
-    </form>
-
+    <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-5 card share_form_card">
+            <h2 class="card-header">Add Share</h2>
+            <hr>
+            <form method="post" class="card-text">
+                {{ form.csrf_token }}
+                <label for="share_name">Share Name </label>
+                {{ form.name(class="form-control", id="share_name") }}
+                <label for="share_ticker">Ticker </label>
+                {{ form.ticker(class="form-control", id="share_ticker") }}
+                <label for="share_qty">Quantity Purchased </label>
+                {{ form.quantity(class="form-control", id="share_qty", type='number') }}
+                <label for="share_amnt">Amount Purchased ($)</label>
+                {{ form.amount_usd(class="form-control", id="share_amnt", type='number') }}
+                <label for="share_fees">Fees ($)</label>
+                {{ form.fees_usd(class="form-control", id="share_fees", type='number') }}
+                <label for="share_provider">Provider</label>
+                {{ form.provider(class="form-control", id="share_provider") }}
+                <label for="share_start">Date Purchased </label>
+                {{ form.start_date(class="form-control", id="share_start", type='date') }}
+                <hr>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
 {% endblock content %}

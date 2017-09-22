@@ -1,12 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Gas Dashboard</title>
-</head>
-<body>
- {% for share in shares %}
-    <h3>{{ share.name }}</h3>
- {% endfor %}
-</body>
-</html>
+{% extends 'base.html' %}
+{% block content %}
+<div class="card-group">
+    {% for share in shares %}
+        <div class="card card-inverse col-md-3" style="background-color: #333; border-color: #333;">
+          <div class="card-block">
+            <h3 class="card-title">{{ share.name }}</h3>
+            <p class="card-text"></p>
+            <a href="/shares/{{ share.name }}" class="btn btn-primary">Details</a>
+          </div>
+        </div>
+    {% endfor %}
+</div>
+
+{% endblock content %}

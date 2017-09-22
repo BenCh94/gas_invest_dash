@@ -81,7 +81,7 @@ current_stocks = {
     },
     "sandp":
     {
-        "name": "S and P 500",
+        "name": "S and P",
         "ticker": "INX"
     }
 }
