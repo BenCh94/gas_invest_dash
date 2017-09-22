@@ -12,7 +12,7 @@ Benchmarking against market average returns and using data analysis tools to inf
  - [x] Share historical data API connection
  - [x] DB model share schema
  - [x] DB model crypto schema
- - [ ] WTF forms new share form
+ - [x] WTF forms new share form
  - [ ] WTF forms new crypto form
  - [ ] WTF update share form
  - [ ] WTF update share form
