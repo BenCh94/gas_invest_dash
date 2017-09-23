@@ -1,8 +1,9 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, flash, redirect, url_for
 from flask_mongoengine import MongoEngine
 from get_live_data import get_live_prices
 from flask_mongoengine.wtf import model_form
 from flask_wtf.csrf import CSRFProtect
+import datetime
 import db_models
 import os
 
@@ -27,15 +28,28 @@ def hello_dash():
     return render_template('home_dash.html', shares=shares)
 
 
-@app.route('/add_investment')
+@app.route('/add_investment', methods=['GET', 'POST'])
 def add_share():
     ShareForm = model_form(db_models.Share)
     form = ShareForm()
     if request.method == 'POST' and form.validate():
-        share = db_models.Share()
-        share_to_add = form.populate_obj(share)
-        if share_to_add.save():
-            redirect('add_success.html')
+        share_to_add = db_models.Share(
+            str(request.form['name']),
+            str(request.form['quantity']),
+            str(request.form['ticker']),
+            str(request.form['amount_usd']),
+            str(request.form['fees_usd']),
+            str(request.form['provider']),
+            str(request.form['start_date'])
+        )
+        print share_to_add
+        try:
+            share_to_add.save()
+            flash('The Investment has been added to the database!')
+            return redirect(url_for('hello_dash'))
+        except StandardError as e:
+            flash('Uh Oh something went wrong!!' + str(e))
+            return redirect(url_for('hello_dash'))
     return render_template('add_share.html', form=form)
 
 

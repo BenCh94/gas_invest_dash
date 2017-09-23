@@ -1,15 +1,16 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="card-group">
+<div class="row">
     {% for share in shares %}
-        <div class="card card-inverse col-md-3" style="background-color: #333; border-color: #333;">
-          <div class="card-block">
-            <h3 class="card-title">{{ share.name }}</h3>
-            <p class="card-text"></p>
-            <a href="/shares/{{ share.name }}" class="btn btn-primary">Details</a>
-          </div>
+        <div class="col-md-6 share_card">
+            <div class="card card-inverse" style="background-color: #333; border-color: #333;">
+                <div class="card-block">
+                    <h4 class="card-header">{{ share.name }}</h4>
+                    <p class="card-text"></p>
+                    <a href="/shares/{{ share.name }}" class="btn btn-primary">Details</a>
+                </div>
+            </div>
         </div>
     {% endfor %}
 </div>
-
 {% endblock content %}

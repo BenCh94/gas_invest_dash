@@ -8,10 +8,10 @@ class HistoricalData(db.EmbeddedDocument):
 
 class Share(db.Document):
     name = db.StringField()
-    quantity = db.DecimalField()
+    quantity = db.FloatField()
     ticker = db.StringField()
-    amount_usd = db.DecimalField()
-    fees_usd = db.DecimalField()
+    amount_usd = db.FloatField()
+    fees_usd = db.FloatField()
     provider = db.StringField()
     start_date = db.DateTimeField()
     historical = db.EmbeddedDocumentField(HistoricalData)
