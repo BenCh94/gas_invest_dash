@@ -2,27 +2,48 @@
 {% block content %}
     <div class="row">
         <div class="col-md-1"></div>
-        <div class="col-md-5 card share_form_card">
+        <div class="col-md-5 card share_form_card card-inverse" style="background-color: #333; border-color: #ffffff; padding-bottom: 10px; margin-top: 20px;">
             <h2 class="card-header">Add Share</h2>
             <hr>
-            <form method="post" class="card-text">
-                {{ form.csrf_token }}
+            <form method="post" class="card-text" action="{{ url_for('add_share') }}">
+                {{ share_form.csrf_token }}
                 <label for="share_name">Share Name </label>
-                {{ form.name(class="form-control", id="share_name") }}
+                {{ share_form.name(class="form-control", id="share_name") }}
                 <label for="share_ticker">Ticker </label>
-                {{ form.ticker(class="form-control", id="share_ticker") }}
+                {{ share_form.ticker(class="form-control", id="share_ticker") }}
                 <label for="share_qty">Quantity Purchased </label>
-                {{ form.quantity(class="form-control", id="share_qty") }}
+                {{ share_form.quantity(class="form-control", id="share_qty") }}
                 <label for="share_amnt">Amount Purchased ($)</label>
-                {{ form.amount_usd(class="form-control", id="share_amnt") }}
+                {{ share_form.amount_usd(class="form-control", id="share_amnt") }}
                 <label for="share_fees">Fees ($)</label>
-                {{ form.fees_usd(class="form-control", id="share_fees") }}
+                {{ share_form.fees_usd(class="form-control", id="share_fees") }}
                 <label for="share_provider">Provider</label>
-                {{ form.provider(class="form-control", id="share_provider", value="DriveWealth") }}
+                {{ share_form.provider(class="form-control", id="share_provider", value="DriveWealth") }}
                 <label for="share_start">Date Purchased </label>
-                {{ form.start_date(class="form-control", id="share_start", type='date') }}
+                {{ share_form.start_date(class="form-control", id="share_start", type='date') }}
                 <hr>
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="submit" class="btn btn-primary" name="share_btn">Submit</button>
+            </form>
+        </div>
+        <div class="col-md-5 card crypto_form_card card-inverse" style="background-color: #333; border-color: #ffffff; margin-top: 20px;">
+            <h2 class="card-header">Add Crypto</h2>
+            <hr>
+            <form method="post" class="card-text" action="{{ url_for('add_crypto') }}">
+                {{ crypto_form.csrf_token }}
+                <label for="crypto_name">Crypto Name </label>
+                {{ crypto_form.name(class="form-control", id="crypto_name") }}
+                <label for="crypto_ticker">Ticker </label>
+                {{ crypto_form.ticker(class="form-control", id="crpyto_ticker") }}
+                <label for="crypto_qty">Quantity Purchased </label>
+                {{ crypto_form.quantity(class="form-control", id="crypto_qty") }}
+                <label for="crypto_amnt">Amount Purchased ($)</label>
+                {{ crypto_form.amount_usd(class="form-control", id="crypto_amnt") }}
+                <label for="crypto_fees">Fees ($)</label>
+                {{ crypto_form.fees_usd(class="form-control", id="crypto_fees") }}
+                <label for="crypto_provider">Provider</label>
+                {{ crypto_form.provider(class="form-control", id="share_provider") }}
+                <hr>
+                <button type="submit" class="btn btn-primary" name="crypto_btn">Submit</button>
             </form>
         </div>
     </div>

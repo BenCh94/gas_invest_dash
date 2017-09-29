@@ -17,7 +17,7 @@ Benchmarking against market average returns and using data analysis tools to inf
  - [ ] WTF update share form
  - [ ] WTF update share form
  - [x] Write historical data to DB
- - [ ] Collate individual investment into single Pandas DF
+ - [x] Collate individual investment into single Pandas DF
  - [ ] Individual share page and graphs
  - [ ] Time Series dashboard total investments performance
  
