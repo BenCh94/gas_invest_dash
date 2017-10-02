@@ -52,11 +52,13 @@ def compile_data(shares_objects):
 
 
 def historic_totals(share_objects):
-
     for share in share_objects:
         # Create df of price data
         price_data = pd.DataFrame(dict(share.historical.daily_data))
         # Reverse columns and rows
         price_data = price_data.T
         # return the max of datetime objects in index adjusted close column
-        print price_data.loc[price_data.index.min()]
+        day_one = price_data.index.min()
+        fees = share.fees_usd
+        amount = share.amount_usd
+        invested = fees + amount

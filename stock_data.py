@@ -30,7 +30,8 @@ def get_stock_data(stock_name):
     # Find the share in the database
     call_params = dict(apikey=api_key,
                        symbol=share_object.ticker,
-                       function="TIME_SERIES_DAILY_ADJUSTED")
+                       function="TIME_SERIES_DAILY_ADJUSTED",
+                       outputsize="full")
     # Creating parameters for API call
     url = alpha_vantage_base
     r = requests.get(url, params=call_params)
