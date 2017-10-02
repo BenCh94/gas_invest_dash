@@ -21,3 +21,25 @@ Benchmarking against market average returns and using data analysis tools to inf
  - [ ] Individual share page and graphs
  - [ ] Time Series dashboard total investments performance
  
+ ### Quant Value Checklist
+ *Gray, W, Carlisle, T (2013). Quantitative Value a practioners guide to automating intelligent investment and eliminating behavioral erros. NewJersey: Wiley Finance. p1-264.*
+ 
+ 
+ #### 1. Identify Potential Fraud and Manipulation
+ 1.1 Accrual Screen
+ 
+- [ ] *STA = Scaled Total Accruals = CA(t) - CL (t) - DEP(t)/ Total Assets(t)*
+
+- [ ] *P_STA = Percentile(STA) among all firms in the universe*
+
+- [ ] *SNOA = operating assets(t) - operating liabilities(t)/ total assets(t)*
+
+- [ ] *P_SNOA = percentile(SNOA) among all firms in the universe*
+
+- [ ] *COMBOACCRUAL = average(P_STA, P_SNOA)*
+
+1.2 Fraud and Manipulation Screen
+
+- [ ] *PROBM = -4.84 + 0.92 x DSRI + 0.528 x GMI + 0.404 x AQI + 0.892 x SGI + 0.115 x DEPI - 0.172 x SGAI + 4.679 x TATA - 0.327 x LVGI*
+ 
+- [ ] *PMAN = CDF(PROBM)* 
