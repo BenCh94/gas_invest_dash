@@ -36,6 +36,7 @@ def get_stock_data(stock_name):
     r = requests.get(url, params=call_params)
     stock_dates = r.json()
     stock_dates = stock_dates['Time Series (Daily)']
+    print min(stock_dates)
     start = share_object.start_date
     # get the start date of investment
     prices = dict()
@@ -44,7 +45,7 @@ def get_stock_data(stock_name):
         # Iterate over daily data
         py_date = datetime.datetime.strptime(key, "%Y-%m-%d")
         # Convert date string to date object
-        if py_date > start:
+        if py_date >= start:
             # If the date is after the investment start, capture the data
             prices[py_date.strftime("%d/%m/%Y")] = stock_dates[key]
 

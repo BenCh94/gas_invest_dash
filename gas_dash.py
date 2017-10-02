@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, flash, redirect, url_for
 from flask_mongoengine import MongoEngine
 from get_live_data import get_live_prices
+from share_data_compiling import compile_data, historic_totals
 from flask_mongoengine.wtf import model_form
 from flask_wtf.csrf import CSRFProtect
 import datetime
@@ -25,14 +26,21 @@ app.secret_key = os.environ.get('secret_key')
 @app.route('/')
 def hello_dash():
     shares = db_models.Share.objects()
-
-    return render_template('home_dash.html', shares=shares)
+    # Get share objects from the DB and compile data to desired format
+    data_to_view = compile_data(shares)
+    historic_totals(shares)
+    return render_template('home_dash.html',
+                           shares=data_to_view['col_shares'],
+                           total_gain=data_to_view['total_p_l'],
+                           total_percent=data_to_view['total_prcnt'])
 
 
 @app.route('/add_investment/share', methods=['POST'])
 def add_share():
+    # Initiate form object from model
     ShareForm = model_form(db_models.Share)
     share_form = ShareForm()
+    # If form validates collect data
     if share_form.validate_on_submit():
         share_to_add = db_models.Share(
             str(request.form['name']),
@@ -44,6 +52,7 @@ def add_share():
             str(request.form['start_date'])
         )
         print share_to_add
+        # Add form data as share object to DB
         try:
             share_to_add.save()
             flash('The Investment has been added to the database!')
@@ -55,7 +64,7 @@ def add_share():
 
 @app.route('/add_investment/crypto', methods=['POST'])
 def add_crypto():
-    print "inside function"
+    # Collect form data and add to DB
     crypto_to_add = db_models.Crypto(
         str(request.form['name']),
         str(request.form['ticker']),

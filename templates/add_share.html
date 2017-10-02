@@ -2,7 +2,7 @@
 {% block content %}
     <div class="row">
         <div class="col-md-1"></div>
-        <div class="col-md-5 card share_form_card card-inverse" style="background-color: #333; border-color: #ffffff; padding-bottom: 10px; margin-top: 20px;">
+        <div class="col-md-5 card share_form_card card-inverse">
             <h2 class="card-header">Add Share</h2>
             <hr>
             <form method="post" class="card-text" action="{{ url_for('add_share') }}">
@@ -25,7 +25,7 @@
                 <button type="submit" class="btn btn-primary" name="share_btn">Submit</button>
             </form>
         </div>
-        <div class="col-md-5 card crypto_form_card card-inverse" style="background-color: #333; border-color: #ffffff; margin-top: 20px;">
+        <div class="col-md-5 card crypto_form_card card-inverse">
             <h2 class="card-header">Add Crypto</h2>
             <hr>
             <form method="post" class="card-text" action="{{ url_for('add_crypto') }}">
