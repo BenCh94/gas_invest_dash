@@ -24,7 +24,13 @@ app.secret_key = os.environ.get('secret_key')
 
 
 @app.route('/')
-def hello_dash():
+def home_dash():
+
+    return render_template('base.html')
+
+
+@app.route('/shares')
+def share_dash():
     shares = db_models.Share.objects()
     # Get share objects from the DB and compile data to desired format
     data_to_view = compile_data(shares)

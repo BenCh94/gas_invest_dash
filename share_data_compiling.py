@@ -57,8 +57,13 @@ def historic_totals(share_objects):
         price_data = pd.DataFrame(dict(share.historical.daily_data))
         # Reverse columns and rows
         price_data = price_data.T
+        price_data['adj_close'] = pd.to_numeric(price_data['adj_close'])
         # return the max of datetime objects in index adjusted close column
         day_one = price_data.index.min()
         fees = share.fees_usd
         amount = share.amount_usd
+        quantity = share.quantity
         invested = fees + amount
+        price_data['gain_loss'] = (price_data['adj_close']*quantity)-invested
+        price_data['percent_gain'] = (price_data['gain_loss']/invested)*100
+        print price_data
