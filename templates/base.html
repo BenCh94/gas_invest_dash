@@ -8,6 +8,9 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.css') }}">
     <script type="text/javascript" src="{{ url_for('static', filename='bootstrap/js/bootstrap.js') }}"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    {% block head_files %}
+
+    {% endblock head_files %}
 </head>
 <body>
 <nav class="navbar navbar-toggleable-md navbar-inverse bg-inverse">

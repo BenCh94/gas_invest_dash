@@ -13,13 +13,19 @@ Benchmarking against market average returns and using data analysis tools to inf
  - [x] DB model share schema
  - [x] DB model crypto schema
  - [x] WTF forms new share form
- - [ ] WTF forms new crypto form
+ - [x] WTF forms new crypto form
  - [ ] WTF update share form
  - [ ] WTF update share form
  - [x] Write historical data to DB
  - [x] Collate individual investment into single Pandas DF
  - [ ] Individual share page and graphs
  - [ ] Time Series dashboard total investments performance
+    - [x] Compile share data total gains and losses and percentages
+    - [x] Combine individual share data into single DataFrame
+    - [x] Sum up daily values for total performance and investment per day
+    - [x] Pass dat to javascript file
+    - [ ] Add DC.js, D3.js and CrossFilter.js files
+    - [ ] Create time series chart of portfolio performance
  
  ### Quant Value Checklist
  *Gray, W, Carlisle, T (2013). Quantitative Value a practioners guide to automating intelligent investment and eliminating behavioral erros. NewJersey: Wiley Finance. p1-264.*

@@ -25,8 +25,9 @@ app.secret_key = os.environ.get('secret_key')
 
 @app.route('/')
 def home_dash():
-
-    return render_template('base.html')
+    shares = db_models.Share.objects()
+    data = historic_totals(shares)
+    return render_template('home_dash.html', data=data)
 
 
 @app.route('/shares')
@@ -34,8 +35,7 @@ def share_dash():
     shares = db_models.Share.objects()
     # Get share objects from the DB and compile data to desired format
     data_to_view = compile_data(shares)
-    historic_totals(shares)
-    return render_template('home_dash.html',
+    return render_template('share_dash.html',
                            shares=data_to_view['col_shares'],
                            total_gain=data_to_view['total_p_l'],
                            total_percent=data_to_view['total_prcnt'])

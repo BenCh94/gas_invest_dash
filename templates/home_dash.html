@@ -1,39 +1,11 @@
 {% extends 'base.html' %}
+{% block head_files %}
+<script type="text/javascript" src="{{ url_for('static', filename='js/portfolio_performance.js') }}"></script>
+    <script type="text/javascript">
+        var portfolio_data = {{ data|tojson }};
+        get_data_flask(portfolio_data);
+    </script>
+{% endblock head_files %}
 {% block content %}
-<div class="row">
-    <div class="col-md-6 card card_inverse home_card totals">
-        <h3 class="card-title">Total P/L</h3>
-        <h3>${{ total_gain }}</h3>
-    </div>
-    <div class="col-md-6 card card_inverse home_card totals">
-        <h3 class="card-title">% P/L</h3>
-        <h3>{{ total_percent }}%</h3>
-    </div>
-    {% for share in shares %}
-        <div class="col-md-6 share_card">
-            <div class="card card-inverse home_card">
-                <div class="card-block">
-                    <h4 class="card-header">{{ share.name }}</h4>
-                    <table class="card-text share_data_table">
-                        <tr>
-                            <th>Invested</th>
-                            <th>Quantity</th>
-                            <th>Price</th>
-                            <th>$ P/L</th>
-                            <th>% P/L</th>
-                        </tr>
-                        <tr>
-                            <td>${{ share.invested }}</td>
-                            <td>{{ share.quantity }}</td>
-                            <td>${{ share.latest_price }}</td>
-                            <td>${{ share.current_gain_loss }}</td>
-                            <td>{{ share.percentage_gain_loss }}%</td>
-                        </tr>
-                    </table>
-                    <a href="/shares/{{ share.name }}" class="btn btn-primary">Details</a>
-                </div>
-            </div>
-        </div>
-    {% endfor %}
-</div>
+
 {% endblock content %}

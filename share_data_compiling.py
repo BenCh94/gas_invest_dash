@@ -52,18 +52,42 @@ def compile_data(shares_objects):
 
 
 def historic_totals(share_objects):
+    portfolio_df = pd.DataFrame([])
+    portfolio_performance = {}
     for share in share_objects:
         # Create df of price data
         price_data = pd.DataFrame(dict(share.historical.daily_data))
         # Reverse columns and rows
         price_data = price_data.T
+        # Convert to numeric for calculations
         price_data['adj_close'] = pd.to_numeric(price_data['adj_close'])
-        # return the max of datetime objects in index adjusted close column
-        day_one = price_data.index.min()
+        # Pull variables from db objects
         fees = share.fees_usd
         amount = share.amount_usd
         quantity = share.quantity
         invested = fees + amount
+        # Do calculations and add to DataFrame
         price_data['gain_loss'] = (price_data['adj_close']*quantity)-invested
         price_data['percent_gain'] = (price_data['gain_loss']/invested)*100
-        print price_data
+        price_data['invested'] = invested
+        # Removing unused pricing data
+        price_data = price_data[['gain_loss', 'percent_gain', 'invested']]
+        # Add the individual share df to portfolio df
+        portfolio_df = portfolio_df.append(price_data)
+    # Sort th portfolio df by index i.e dates
+    portfolio_df.sort_index(inplace=True)
+    # Generate list of unique index values
+    trading_days = list(portfolio_df.index.unique())
+    # Loop through list of days
+    for day in trading_days:
+        # Create df for individual day
+        day_df = portfolio_df.loc[day, ['gain_loss', 'percent_gain', 'invested']]
+        # Create dictionary summing day values
+        portfolio_performance[day] = dict(gain_loss=sum(day_df['gain_loss']),
+                                          date=day,
+                                          invested=sum(day_df['invested']))
+    # Convert dictionary back to df and transpose
+    total_performance = pd.DataFrame(portfolio_performance).T
+    # Add total percentage calculation
+    total_performance['percentage_gain'] = (total_performance['gain_loss']/total_performance['invested'])*100
+    return total_performance.to_json(orient='records')
