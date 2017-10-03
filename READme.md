@@ -23,7 +23,10 @@ Benchmarking against market average returns and using data analysis tools to inf
     - [x] Compile share data total gains and losses and percentages
     - [x] Combine individual share data into single DataFrame
     - [x] Sum up daily values for total performance and investment per day
-    - [x] Pass dat to javascript file
+    - [ ] Find S&P 550 data for time period
+    - [ ] Compare performance considering relevant fees for S&P buy ins 
+        *Fees apply to individual share buys*
+    - [x] Pass data to javascript file
     - [ ] Add DC.js, D3.js and CrossFilter.js files
     - [ ] Create time series chart of portfolio performance
  
