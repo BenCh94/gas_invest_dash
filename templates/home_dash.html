@@ -3,9 +3,12 @@
     <script type="text/javascript">
         var portfolio_data = {{ data|tojson }};
     </script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/crossfilter.min.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='js/portfolio_performance.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/dc/dc.min.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='js/dc/dc.css') }}">
 {% endblock head_files %}
 {% block content %}
-
+    <div id="chart-performance-day"></div>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/portfolio_performance.js') }}"></script>
 {% endblock content %}

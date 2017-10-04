@@ -1,4 +1,5 @@
 import pandas as pd
+from datetime import datetime
 
 
 # Function to find the latest closing proce available

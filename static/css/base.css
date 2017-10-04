@@ -50,3 +50,7 @@ body {
         font-size: small;
     }
 }
+
+#chart-performance-day {
+    background-color: #333;
+}
