@@ -20,19 +20,34 @@ for(var i=0;i<portfolio_data.length;i++){
 
 
 print_filter(portfolio_data);
+/////// Dimensions ////////
 var dateDim = ndx.dimension(function(d) {return d.date;});
+var investedDim = ndx.dimension(function(d) {return d.invested});
+//////////////////////////
 var total_gain = dateDim.group().reduceSum(dc.pluck('gain_loss'));
 var total_invested = dateDim.group().reduceSum(dc.pluck('invested'));
+var investedND = ndx.groupAll().reduceSum(dc.pluck('invested'));
 
 var minDate = dateDim.bottom(1)[0].date;
 var maxDate = dateDim.top(1)[0].date;
 
 var dailyChart = dc.lineChart("#chart-performance-day");
+var totalInvested = dc.numberDisplay('#invested-total');
 
 dailyChart
 	.width(1000).height(400)
 	.dimension(dateDim)
 	.group(total_gain)
+	.ordinalColors(['#ffffff'])
+	.yAxisLabel('($)Gain/Loss')
 	.x(d3.time.scale().domain([minDate, maxDate]));
+
+totalInvested
+	.width(400).height(200)
+	.valueAccessor(function (d) {
+		return d;
+	})
+	.group(total_invested);
+
 
 dc.renderAll();
