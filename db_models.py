@@ -45,3 +45,11 @@ class CryptoBuy(db.EmbeddedDocument):
     date = db.DateTimeField()
     fees_usd = db.FloatField()
 
+
+class Benchmark(db.Document):
+    name = db.StringField()
+    ticker = db.StringField()
+    start_date = db.DateTimeField()
+    historical = db.EmbeddedDocumentField(HistoricalData)
+    meta = {'collection': 'benchmarks'}
+

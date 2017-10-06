@@ -26,7 +26,8 @@ app.secret_key = os.environ.get('secret_key')
 @app.route('/')
 def home_dash():
     shares = db_models.Share.objects()
-    data = historic_totals(shares)
+    benchmark = db_models.Benchmark.objects(name='SandP 500').get()
+    data = historic_totals(shares, benchmark)
     return render_template('home_dash.html', data=data)
 
 

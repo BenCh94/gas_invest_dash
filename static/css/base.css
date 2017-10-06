@@ -54,3 +54,22 @@ body {
 #chart-performance-day {
     background-color: #333;
 }
+#time-in-days {
+    width: 100%;
+    text-align: center;
+    background-color: #333;
+    color: #ffffff;
+    font-size: 48px;
+}
+#time-in-text {
+    padding: 10px;
+    text-align: center;
+    background-color: #333;
+    color: #ffffff;
+}
+#time_in_box{
+    background-color: #333;
+    padding-left: 0;
+    margin-left: 15px;
+}
+

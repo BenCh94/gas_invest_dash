@@ -52,7 +52,7 @@ def compile_data(shares_objects):
     return data
 
 
-def historic_totals(share_objects):
+def historic_totals(share_objects, benchmark):
     portfolio_df = pd.DataFrame([])
     portfolio_performance = {}
     for share in share_objects:
@@ -71,8 +71,10 @@ def historic_totals(share_objects):
         price_data['gain_loss'] = (price_data['adj_close']*quantity)-invested
         price_data['percent_gain'] = (price_data['gain_loss']/invested)*100
         price_data['invested'] = invested
+        price_data['fees'] = fees
+        price_data['amount'] = amount
         # Removing unused pricing data
-        price_data = price_data[['gain_loss', 'percent_gain', 'invested']]
+        price_data = price_data[['gain_loss', 'percent_gain', 'invested', 'fees', 'amount']]
         # Add the individual share df to portfolio df
         portfolio_df = portfolio_df.append(price_data)
     # Sort th portfolio df by index i.e dates
@@ -82,13 +84,26 @@ def historic_totals(share_objects):
     # Loop through list of days
     for day in trading_days:
         # Create df for individual day
-        day_df = portfolio_df.loc[day, ['gain_loss', 'percent_gain', 'invested']]
+        day_df = portfolio_df.loc[day, ['gain_loss', 'percent_gain', 'invested', 'fees', 'amount']]
         # Create dictionary summing day values
         portfolio_performance[day] = dict(gain_loss=sum(day_df['gain_loss']),
                                           date=day,
-                                          invested=sum(day_df['invested']))
+                                          invested=sum(day_df['invested']),
+                                          cuml_fees=sum(day_df['fees']),
+                                          amount=sum(day_df['amount']))
     # Convert dictionary back to df and transpose
     total_performance = pd.DataFrame(portfolio_performance).T
+    # Adding benchmark data
+    bench_data = pd.DataFrame(dict(benchmark.historical.daily_data)).T
+    # Add bench close price to performance data
+    total_performance['sp_close'] = bench_data['adj_close']
+    # Find the dates when investment amount changed
+    test = total_performance.drop_duplicates(subset='cuml_fees', keep='first')
+    test['amount'] = pd.to_numeric(test['amount'])
+    test['sp_close'] = pd.to_numeric(test['sp_close'])
+    test['sp_quantity'] = test['amount']*test['sp_close']
+    print test
+    print list(test['date'])
     # Add total percentage calculation
     total_performance['percentage_gain'] = (total_performance['gain_loss']/total_performance['invested'])*100
     return total_performance.to_json(orient='records')

@@ -9,7 +9,26 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='js/dc/dc.css') }}">
 {% endblock head_files %}
 {% block content %}
-    <div id="chart-performance-day"></div>
-    <div id="total-invested"></div>
+    <div class="row">
+        <div class="col-md-12" id="performance_box">
+            <div id="chart-performance-day"></div>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-md-3" id="time_in_box">
+            <div id="time-in-text">
+                <h4>Trading Days</h4>
+                <p>"It's not about timing the market, it's about time in the market"</p>
+                <hr>
+            </div>
+            <div id="time-in-days"></div>
+        </div>
+        <div class="col-md-3">
+            <div id="total-invested"></div>
+        </div>
+        <div class="col-md-3"></div>
+        <div class="col-md-3"></div>
+    </div>
     <script type="text/javascript" src="{{ url_for('static', filename='js/portfolio_performance.js') }}"></script>
 {% endblock content %}
