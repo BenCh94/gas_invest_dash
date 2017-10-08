@@ -1,8 +1,9 @@
 import pandas as pd
-from datetime import datetime
+import numpy as np
+from datetime import datetime, date
 
 
-# Function to find the latest closing proce available
+# Function to find the latest closing price available
 def get_latest_price(share):
     # Create df of price data
     price_data = pd.DataFrame(dict(share.historical.daily_data))
@@ -52,6 +53,26 @@ def compile_data(shares_objects):
     return data
 
 
+def apply_sp(row, quantity_dict):
+    z = 0
+    sp_quantities = []
+    for day in quantity_dict:
+        sp_quantities.append(day['sp_quantity'])
+    row_date = datetime.strptime(row['date'], '%Y-%m-%d')
+    while z < len(quantity_dict):
+        if z < len(quantity_dict)-1:
+            next_date = datetime.strptime(quantity_dict[z + 1]['date'], '%Y-%m-%d')
+        else:
+            next_date = datetime.strptime('3000-01-01', '%Y-%m-%d')
+        first_date = datetime.strptime(quantity_dict[z]['date'], '%Y-%m-%d')
+        if next_date > row_date >= first_date and z == 0:
+            return quantity_dict[z]['sp_quantity']
+        elif next_date > row_date >= first_date:
+            quantity = sum(sp_quantities[0:z+1])
+            return quantity
+        z += 1
+
+
 def historic_totals(share_objects, benchmark):
     portfolio_df = pd.DataFrame([])
     portfolio_performance = {}
@@ -99,11 +120,28 @@ def historic_totals(share_objects, benchmark):
     total_performance['sp_close'] = bench_data['adj_close']
     # Find the dates when investment amount changed
     test = total_performance.drop_duplicates(subset='cuml_fees', keep='first')
-    test['amount'] = pd.to_numeric(test['amount'])
-    test['sp_close'] = pd.to_numeric(test['sp_close'])
-    test['sp_quantity'] = test['amount']*test['sp_close']
-    print test
-    print list(test['date'])
+    test.loc[:, 'amount'] = pd.to_numeric(test['amount'])
+    test.loc[:, 'sp_close'] = pd.to_numeric(test['sp_close'])
+    # test['sp_quantity'] = test['amount']/test['sp_close']
+    sp_quant_dict = test.to_dict(orient='records')
     # Add total percentage calculation
     total_performance['percentage_gain'] = (total_performance['gain_loss']/total_performance['invested'])*100
+    # Add zero starting point
+    total_performance['sp_quantity'] = 0
+    i = 0
+    while i < len(sp_quant_dict):
+        if i == 0:
+            sp_quant_dict[i]['period_amount'] = sp_quant_dict[i]['amount']
+            sp_quant_dict[i]['sp_quantity'] = sp_quant_dict[i]['period_amount']/sp_quant_dict[i]['sp_close']
+        else:
+            sp_quant_dict[i]['period_amount'] = sp_quant_dict[i]['amount'] - sp_quant_dict[i-1]['amount']
+            sp_quant_dict[i]['sp_quantity'] = sp_quant_dict[i]['period_amount'] / sp_quant_dict[i]['sp_close']
+        i += 1
+    total_performance['sp_quantity'] = total_performance.apply(lambda row: apply_sp(row, sp_quant_dict), axis=1)
+    total_performance['sp_close'] = pd.to_numeric(total_performance['sp_close'])
+    total_performance['sp_quantity'] = pd.to_numeric(total_performance['sp_quantity'])
+    total_performance['sp_value'] = total_performance['sp_quantity'] * total_performance['sp_close']
+    total_performance['sp_gain'] = total_performance['sp_value'] - total_performance['invested']
+    total_performance['sp_offset'] = total_performance['sp_gain'] - total_performance['gain_loss']
+    print total_performance
     return total_performance.to_json(orient='records')

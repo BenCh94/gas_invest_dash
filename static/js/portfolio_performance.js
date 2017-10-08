@@ -23,6 +23,7 @@ var gainDim = ndx.dimension(function(d) {return d.gain_loss;});
 var percentDim = ndx.dimension(function(d) {return d.percentage_gain;});
 //////////////////////////
 var total_gain = dateDim.group().reduceSum(dc.pluck('gain_loss'));
+var sp_benchmark = dateDim.group().reduceSum(dc.pluck('sp_gain'));
 var selected_data = dateDim.filter(function(d) {return Math.max(d)});
 var total_invested = selected_data.date;
 var timeInMarket = ndx.groupAll();
@@ -31,17 +32,31 @@ console.log(total_invested);
 var minDate = dateDim.bottom(1)[0].date;
 var maxDate = dateDim.top(1)[0].date;
 
-var dailyChart = dc.lineChart("#chart-performance-day");
+var dailyChart = dc.compositeChart("#chart-performance-day");
 var dailyWidth = $("#performance_box").width();
 // var totalInvested = dc.numberDisplay('#total-invested');
 var timeIn = dc.numberDisplay('#time-in-days');
 var timeInWidth = $('#time_in_box').width();
+var gainsND = dc.numberDisplay('#gains-total');
+var gainsWidth = $('#gains_box').width();
+
 
 dailyChart
 	.width(dailyWidth).height(400)
-	.dimension(dateDim)
-	.group(total_gain)
-	.ordinalColors(['#ffffff'])
+	.compose([
+		dc.lineChart(dailyChart)
+			.dimension(dateDim)
+			.group(sp_benchmark, 'S & P 500')
+			.renderArea(true)
+			.ordinalColors(['#324A70']),
+		dc.lineChart(dailyChart)
+			.dimension(dateDim)
+			.group(total_gain, 'Portfolio')
+			.renderArea(true)
+			.ordinalColors(['#35863A'])
+	])
+
+	.legend(dc.legend().x(50).y(10).itemHeight(13).gap(5))
 	.yAxisLabel('($)Gain/Loss')
 	.x(d3.time.scale().domain([minDate, maxDate]));
 
@@ -52,6 +67,14 @@ timeIn
 		return d;
 	})
 	.group(timeInMarket);
+
+gainsND
+	.width(gainsWidth).height(400)
+	.formatNumber(d3.format('d'))
+	.valueAccessor(function (d){
+		return d;
+	})
+	.group(total_gain);
 
 
 // totalInvested
