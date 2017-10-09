@@ -27,7 +27,8 @@ app.secret_key = os.environ.get('secret_key')
 def home_dash():
     shares = db_models.Share.objects()
     benchmark = db_models.Benchmark.objects(name='SandP 500').get()
-    data = historic_totals(shares, benchmark)
+    portfolio_df = historic_totals(shares, benchmark)
+    data = portfolio_df.to_json(orient='records')
     return render_template('home_dash.html', data=data)
 
 
@@ -114,6 +115,18 @@ def share_page(share_name):
 def get_crypto_prices():
 
     return str(get_live_prices())
+
+
+@app.route('/monthly_report/<report_start>/<report_end>')
+def get_monthly(report_start, report_end):
+    shares = db_models.Share.objects()
+    benchmark = db_models.Benchmark.objects(name='SandP 500').get()
+    portfolio_df = historic_totals(shares, benchmark)
+    # Generating a monthly review example
+    report_selection = (portfolio_df.index >= report_start) & (portfolio_df.index < report_end)
+    report_df = portfolio_df.loc[report_selection]
+    report_html = report_df.to_html()
+    return report_html
 
 
 if __name__ == '__main__':

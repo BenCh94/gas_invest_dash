@@ -116,6 +116,7 @@ def historic_totals(share_objects, benchmark):
     total_performance = pd.DataFrame(portfolio_performance).T
     # Add total percentage calculation
     total_performance['percentage_gain'] = (total_performance['gain_loss'] / total_performance['invested']) * 100
+    total_performance['portfolio_value'] = total_performance['gain_loss'] + total_performance['amount']
     # Adding benchmark data
     bench_data = pd.DataFrame(dict(benchmark.historical.daily_data)).T
     # Add bench close price to performance data
@@ -130,6 +131,7 @@ def historic_totals(share_objects, benchmark):
     # Add zero starting point
     total_performance['sp_quantity'] = 0
     i = 0
+    # Loop through dict and find amount of sp 500 could have purchased on day instead of investment
     while i < len(sp_quant_dict):
         if i == 0:
             sp_quant_dict[i]['period_amount'] = sp_quant_dict[i]['amount']
@@ -138,17 +140,20 @@ def historic_totals(share_objects, benchmark):
             sp_quant_dict[i]['period_amount'] = sp_quant_dict[i]['amount'] - sp_quant_dict[i-1]['amount']
             sp_quant_dict[i]['sp_quantity'] = sp_quant_dict[i]['period_amount'] / sp_quant_dict[i]['sp_close']
         i += 1
+    # Apply the sp_quantity to all days in total performance
     total_performance['sp_quantity'] = total_performance.apply(lambda row: apply_sp(row, sp_quant_dict), axis=1)
+    # Convert to numeric for calculations
     total_performance['sp_close'] = pd.to_numeric(total_performance['sp_close'])
     total_performance['sp_quantity'] = pd.to_numeric(total_performance['sp_quantity'])
+    # Do benchmark calculations with s and p 500
     total_performance['sp_value'] = total_performance['sp_quantity'] * total_performance['sp_close']
     total_performance['sp_gain'] = total_performance['sp_value'] - total_performance['invested']
     total_performance['sp_percentage'] = (total_performance['sp_gain']/total_performance['invested'])*100
-    print total_performance
+    # Printing Mean, Median and Standard Deviation for reference
     print np.mean(total_performance['percentage_gain'])
     print np.median(total_performance['percentage_gain'])
     print np.std(total_performance['percentage_gain'])
     print np.mean(total_performance['sp_percentage'])
     print np.median(total_performance['sp_percentage'])
     print np.std(total_performance['sp_percentage'])
-    return total_performance.to_json(orient='records')
+    return total_performance
