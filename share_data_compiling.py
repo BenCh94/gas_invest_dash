@@ -156,4 +156,5 @@ def historic_totals(share_objects, benchmark):
     print np.mean(total_performance['sp_percentage'])
     print np.median(total_performance['sp_percentage'])
     print np.std(total_performance['sp_percentage'])
+    print total_performance.head()
     return total_performance

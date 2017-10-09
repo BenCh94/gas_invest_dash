@@ -54,6 +54,15 @@ body {
 #chart-performance-day {
     background-color: #333;
 }
+#chart-performance-day > svg > g:nth-child(1) > g.axis {
+    fill: white;
+}
+.dc-legend{
+    fill:white;
+}
+.y-axis-label{
+    fill:white;
+}
 #time-in-days {
     width: 100%;
     text-align: center;
