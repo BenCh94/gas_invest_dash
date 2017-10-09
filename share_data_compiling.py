@@ -150,11 +150,15 @@ def historic_totals(share_objects, benchmark):
     total_performance['sp_gain'] = total_performance['sp_value'] - total_performance['invested']
     total_performance['sp_percentage'] = (total_performance['sp_gain']/total_performance['invested'])*100
     # Printing Mean, Median and Standard Deviation for reference
-    print np.mean(total_performance['percentage_gain'])
-    print np.median(total_performance['percentage_gain'])
-    print np.std(total_performance['percentage_gain'])
-    print np.mean(total_performance['sp_percentage'])
-    print np.median(total_performance['sp_percentage'])
-    print np.std(total_performance['sp_percentage'])
+    portfolio_mean = np.mean(total_performance['percentage_gain'])
+    portfolio_median = np.median(total_performance['percentage_gain'])
+    portfolio_std = np.std(total_performance['percentage_gain'])
+    portfolio_best = max(total_performance['percentage_gain'])
+    portfolio_worst = min(total_performance['percentage_gain'])
+    sp_mean = np.mean(total_performance['sp_percentage'])
+    sp_median = np.median(total_performance['sp_percentage'])
+    sp_std = np.std(total_performance['sp_percentage'])
+    sp_best = max(total_performance['sp_percentage'])
+    sp_worst = min(total_performance['sp_percentage'])
     print total_performance.head()
     return total_performance
