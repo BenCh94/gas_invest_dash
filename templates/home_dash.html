@@ -24,11 +24,30 @@
             </div>
             <div id="time-in-days"></div>
         </div>
-        <div class="col-md-3">
-            <div id="total-invested"></div>
-        </div>
         <div class="col-md-3" id="gains_box">
-            <div id="gains-total"></div>
+            <table>
+                <tr>
+                    <th>Portfolio Gain %</th>
+                    <th>Portfolio Gain $</th>
+                    <th>Mean Gain %</th>
+                    <th>Gain Deviation</th>
+                    <th>Co-efficient of Variation</th>
+                </tr>
+                <tr id="gas_row">
+                    <td>{{ metrics.portfolio_percentage }}</td>
+                    <td>{{ metrics.portfolio_gain}}</td>
+                    <td>{{ metrics.portfolio_mean }}</td>
+                    <td>{{ metrics.portfolio_std }}</td>
+                    <td>{{ metrics.portfolio_cv }}</td>
+                </tr>
+                <tr id="sp_row">
+                    <td>{{ metrics.sp_percentage }}</td>
+                    <td>{{ metrics.sp_gain}}</td>
+                    <td>{{ metrics.sp_mean }}</td>
+                    <td>{{ metrics.sp_std }}</td>
+                    <td>{{ metrics.sp_cv }}</td>
+                </tr>
+            </table>
         </div>
         <div class="col-md-3"></div>
     </div>

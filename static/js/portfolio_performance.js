@@ -69,14 +69,5 @@ timeIn
 	})
 	.group(timeInMarket);
 
-gainsND
-	.width(gainsWidth).height(400)
-	.formatNumber(d3.format('d'))
-	.valueAccessor(function (d){
-		return d;
-	})
-	.group(total_gain);
-
-
 
 dc.renderAll();

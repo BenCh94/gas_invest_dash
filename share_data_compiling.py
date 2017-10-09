@@ -150,15 +150,35 @@ def historic_totals(share_objects, benchmark):
     total_performance['sp_gain'] = total_performance['sp_value'] - total_performance['invested']
     total_performance['sp_percentage'] = (total_performance['sp_gain']/total_performance['invested'])*100
     # Printing Mean, Median and Standard Deviation for reference
+    portfolio_gain = total_performance.iloc[-1]['gain_loss']
+    portfolio_percentage = total_performance.iloc[-1]['percentage_gain']
     portfolio_mean = np.mean(total_performance['percentage_gain'])
     portfolio_median = np.median(total_performance['percentage_gain'])
     portfolio_std = np.std(total_performance['percentage_gain'])
     portfolio_best = max(total_performance['percentage_gain'])
     portfolio_worst = min(total_performance['percentage_gain'])
+    sp_gain = total_performance.iloc[-1]['sp_gain']
+    sp_percentage = total_performance.iloc[-1]['sp_percentage']
     sp_mean = np.mean(total_performance['sp_percentage'])
     sp_median = np.median(total_performance['sp_percentage'])
     sp_std = np.std(total_performance['sp_percentage'])
     sp_best = max(total_performance['sp_percentage'])
     sp_worst = min(total_performance['sp_percentage'])
+    metrics_dict = dict(portfolio_gain="{0:.2f}".format(portfolio_gain),
+                        portfolio_percentage="{0:.2f}".format(portfolio_percentage),
+                        portfolio_mean="{0:.2f}".format(portfolio_mean),
+                        portfolio_median="{0:.2f}".format(portfolio_median),
+                        portfolio_best="{0:.2f}".format(portfolio_best),
+                        portfolio_worst="{0:.2f}".format(portfolio_worst),
+                        portfolio_std="{0:.2f}".format(portfolio_std),
+                        portfolio_cv="{0:.2f}".format(abs(portfolio_std/portfolio_mean)),
+                        sp_gain="{0:.2f}".format(sp_gain),
+                        sp_percentage="{0:.2f}".format(sp_percentage),
+                        sp_mean="{0:.2f}".format(sp_mean),
+                        sp_median="{0:.2f}".format(sp_median),
+                        sp_std="{0:.2f}".format(sp_std),
+                        sp_best="{0:.2f}".format(sp_best),
+                        sp_worst="{0:.2f}".format(sp_worst),
+                        sp_cv="{0:.2f}".format(abs(sp_std/sp_mean)))
     print total_performance.head()
-    return total_performance
+    return dict(df=total_performance, metric=metrics_dict)

@@ -54,6 +54,22 @@ body {
 #chart-performance-day {
     background-color: #333;
 }
+#gains_box {
+    background-color: #333;
+    padding: 0;
+}
+#gains_box > table {
+    font-size: small;
+    border-color: white;
+    color: white;
+    width: 100%;
+}
+#gas_row {
+    color: #17B121;
+}
+#sp_row{
+    color: #2969CE;
+}
 #chart-performance-day > svg > g:nth-child(1) > g.axis {
     fill: white;
 }
