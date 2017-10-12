@@ -29,6 +29,12 @@ Benchmarking against market average returns and using data analysis tools to inf
     - [x] Pass data to javascript file
     - [x] Add DC.js, D3.js and CrossFilter.js files
     - [x] Create time series chart of portfolio performance
+    - [ ] Include crypto data into performance
+    - [ ] Store crypto historical data since purchase
+ - [ ] Build connection to edgar online data
+ - [ ] Find investable universe (Cut bottom 40% of stocks by market cap)
+ - [ ] Build data pipeline for QV variables
+ - [ ] Build analysis of data through Edgar API and pandas dataframe (On-Demand data rather than saving to the DB given scale of data)
  
  ### Quant Value Checklist
  *Gray, W, Carlisle, T (2013). Quantitative Value a practioners guide to automating intelligent investment and eliminating behavioral erros. NewJersey: Wiley Finance. p1-264.*
@@ -38,6 +44,7 @@ Benchmarking against market average returns and using data analysis tools to inf
  1.1 Accrual Screen
  
 - [ ] *STA = Scaled Total Accruals = CA(t) - CL (t) - DEP(t)/ Total Assets(t)*
+        -   Change in Current assets
 
 - [ ] *P_STA = Percentile(STA) among all firms in the universe*
 

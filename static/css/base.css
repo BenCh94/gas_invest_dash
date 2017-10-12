@@ -56,19 +56,41 @@ body {
 }
 #gains_box {
     background-color: #333;
-    padding: 0;
+    padding-top: 30px;
+    padding-bottom: 10px;
+    margin: 0;
 }
-#gains_box > table {
-    font-size: small;
-    border-color: white;
+#metrics_box {
+    background-color: #333;
+    padding-top: 30px;
+    padding-bottom: 10px;
+    margin: 0;
+}
+#metrics_box > table{
     color: white;
     width: 100%;
 }
-#gas_row {
-    color: #17B121;
+#gains_box > table {
+    width: 100%;
 }
-#sp_row{
+.header_row > th {
+    text-align: center;
+    font-size: large;
+    color: white;
+}
+.gas_row {
+    color: #17B121;
+    font-size: large;
+}
+.gas_row > td {
+    text-align: center;
+}
+.sp_row{
     color: #2969CE;
+    font-size: large;
+}
+.sp_row > td {
+    text-align: center;
 }
 #chart-performance-day > svg > g:nth-child(1) > g.axis {
     fill: white;
@@ -85,6 +107,7 @@ body {
     background-color: #333;
     color: #ffffff;
     font-size: 48px;
+    margin: 0;
 }
 #time-in-text {
     padding: 10px;

@@ -171,7 +171,7 @@ def historic_totals(share_objects, benchmark):
                         portfolio_best="{0:.2f}".format(portfolio_best),
                         portfolio_worst="{0:.2f}".format(portfolio_worst),
                         portfolio_std="{0:.2f}".format(portfolio_std),
-                        portfolio_cv="{0:.2f}".format(abs(portfolio_std/portfolio_mean)),
+                        portfolio_cv="{0:.2f}".format(abs(portfolio_std/abs(portfolio_mean))),
                         sp_gain="{0:.2f}".format(sp_gain),
                         sp_percentage="{0:.2f}".format(sp_percentage),
                         sp_mean="{0:.2f}".format(sp_mean),
@@ -179,6 +179,6 @@ def historic_totals(share_objects, benchmark):
                         sp_std="{0:.2f}".format(sp_std),
                         sp_best="{0:.2f}".format(sp_best),
                         sp_worst="{0:.2f}".format(sp_worst),
-                        sp_cv="{0:.2f}".format(abs(sp_std/sp_mean)))
+                        sp_cv="{0:.2f}".format(abs(sp_std/abs(sp_mean))))
     print total_performance.head()
     return dict(df=total_performance, metric=metrics_dict)
