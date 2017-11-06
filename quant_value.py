@@ -17,7 +17,7 @@ def get_iex_company_list():
 def append_number(quarter, q):
     columns = quarter.keys()
     new_columns = [v+str(q) for v in columns]
-    for i in range(0, len(columns) - 1):
+    for i in range(0, len(columns)):
         quarter[new_columns[i]] = quarter.pop(columns[i])
     return quarter
 
@@ -62,11 +62,16 @@ def create_quant_df():
 
 
 def percentile_scaled_net_assets(row):
-    operating_assets = row['currentAssets']
+    operating_assets = row['currentAssets1']
     operating_libilities = row['currentDebt1']
     total_assets = row['totalAssets1']
     snoa = (operating_assets - operating_libilities)/total_assets
     return snoa
+
+
+def prob_fin_distress(row):
+    mta = row['totalLiabilities1'] + row['marketcap']
+    nimta = row['netIncome1']/mta
 
 
 # quant_df = create_quant_df()
@@ -78,3 +83,6 @@ def quant_calculations(quant_df):
     quant_df['p_snoa'] = quant_df['snoa'].rank(pct=True)
     quant_df['p_ebitda'] = quant_df['EBITDA'].rank(pct=True)
     print quant_df[quant_df['p_ebitda'] > 0.90]['ticker']
+
+
+quant_calculations(quant_df)
