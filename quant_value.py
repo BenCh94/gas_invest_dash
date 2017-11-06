@@ -48,13 +48,33 @@ def get_stats_financial(ticker, name, index):
     stats_list.append(create_stock_dict(ticker_stats, finance_dict, ticker, name, index))
 
 
+# Create DF containing company stats and info and write to csv file
 def create_quant_df():
     company_df = pd.read_csv('static/files/iex_comp_list.csv')
     company_df = company_df[company_df['type'] == 'cs']
-    comp_dict = company_df.to_dict(orient='records')
+    comp_dict = company_df.head(50).to_dict(orient='records')
     for company in comp_dict:
         print company['Unnamed: 0']
         get_stats_financial(company['symbol'], company['name'], company['Unnamed: 0'])
     quant_df = pd.DataFrame(stats_list)
     quant_df.to_csv('static/files/quant_analysis.csv')
     return quant_df
+
+
+def percentile_scaled_net_assets(row):
+    operating_assets = row['currentAssets']
+    operating_libilities = row['currentDebt1']
+    total_assets = row['totalAssets1']
+    snoa = (operating_assets - operating_libilities)/total_assets
+    return snoa
+
+
+# quant_df = create_quant_df()
+quant_df = pd.read_csv('static/files/quant_analysis.csv')
+
+
+def quant_calculations(quant_df):
+    quant_df['snoa'] = quant_df.apply(percentile_scaled_net_assets, axis=1)
+    quant_df['p_snoa'] = quant_df['snoa'].rank(pct=True)
+    quant_df['p_ebitda'] = quant_df['EBITDA'].rank(pct=True)
+    print quant_df[quant_df['p_ebitda'] > 0.90]['ticker']
