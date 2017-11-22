@@ -52,7 +52,8 @@ def get_stats_financial(ticker, name, index):
 def create_quant_df():
     company_df = pd.read_csv('static/files/iex_comp_list.csv')
     company_df = company_df[company_df['type'] == 'cs']
-    comp_dict = company_df.head(50).to_dict(orient='records')
+    # Insert company indexes xurrently at 250:300
+    comp_dict = company_df[250:300].to_dict(orient='records')
     for company in comp_dict:
         print company['Unnamed: 0']
         get_stats_financial(company['symbol'], company['name'], company['Unnamed: 0'])
@@ -74,8 +75,8 @@ def prob_fin_distress(row):
     nimta = row['netIncome1']/mta
 
 
-# quant_df = create_quant_df()
-quant_df = pd.read_csv('static/files/quant_analysis.csv')
+quant_df = create_quant_df()
+# quant_df = pd.read_csv('static/files/quant_analysis.csv')
 
 
 def quant_calculations(quant_df):

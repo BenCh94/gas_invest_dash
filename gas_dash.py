@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, flash, redirect, url_for
 from flask_mongoengine import MongoEngine
-from get_live_data import get_live_prices
+# from get_live_data import get_live_prices
 from share_data_compiling import compile_data, historic_totals
 from flask_mongoengine.wtf import model_form
 from flask_wtf.csrf import CSRFProtect
@@ -108,14 +108,17 @@ def share_page(share_name):
     data = db_models.Share.objects.get_or_404(name=name)
     share_daily_df = pd.DataFrame(data.historical.daily_data)
     share_daily_df = share_daily_df.T
+    share_daily_df['date'] = share_daily_df.index
+    data = share_daily_df.to_json(orient='records')
 
-    return share_daily_df.to_html()
+    return render_template('share_page.html', data=data)
 
 
 @app.route('/cryptos')
 def get_crypto_prices():
+    crypto_data = get_live_prices()
 
-    return str(get_live_prices())
+    return render_template('cryptos.html', data=crypto_data)
 
 
 @app.route('/monthly_report/<report_start>/<report_end>')

@@ -1,4 +1,5 @@
 from coinmarketcap import Market
+import db_models
 
 
 def get_live_prices():
@@ -12,3 +13,10 @@ def get_live_prices():
 
     return invest_data
 
+
+def get_cryptos_db():
+    cryptos = db_models.Crypto.objects()
+    print cryptos[0]['quantity']
+
+
+get_cryptos_db()

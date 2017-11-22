@@ -54,6 +54,9 @@ body {
 #chart-performance-day {
     background-color: #333;
 }
+#price-chart-day {
+    background-color: #333;
+}
 #gains_box {
     background-color: #333;
     padding-top: 30px;
