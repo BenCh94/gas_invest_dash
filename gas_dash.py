@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, flash, redirect, url_for
 from flask_mongoengine import MongoEngine
 # from get_live_data import get_live_prices
-from share_data_compiling import compile_data, historic_totals
+from share_data_compiling import compile_data, historic_totals, iex_historic_totals
 from flask_mongoengine.wtf import model_form
 from flask_wtf.csrf import CSRFProtect
 import datetime
@@ -27,7 +27,7 @@ app.secret_key = os.environ.get('secret_key')
 def home_dash():
     shares = db_models.Share.objects()
     benchmark = db_models.Benchmark.objects(name='SandP 500').get()
-    historic_data = historic_totals(shares, benchmark)
+    historic_data = iex_historic_totals(shares, benchmark)
     portfolio_df = historic_data['df']
     data = portfolio_df.to_json(orient='records')
     return render_template('home_dash.html', data=data, metrics=historic_data['metric'])
