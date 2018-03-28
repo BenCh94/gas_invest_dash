@@ -89,7 +89,7 @@ def iex_stock_chart(stock_name):
     add_data_to_db(price_dict, stock_name)
 
 
-get_iex_sandp()
+# get_iex_sandp()
 
 
 def insert_amount_daily(share_name):
@@ -112,11 +112,11 @@ def insert_amount_daily(share_name):
     print update
 
 
-for share in Share.objects:
-    if share.status == 'Inactive':
-        continue
-    print share.name
-    iex_stock_chart(share.name)
+# for share in Share.objects:
+#     if share.status == 'Inactive':
+#         continue
+#     print share.name
+#     iex_stock_chart(share.name)
 
 
 def add_to_share(share_name, date, qty, amount, fees):

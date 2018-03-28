@@ -6,7 +6,7 @@ from research_data import get_details, get_key_stats, get_financials
 from flask_mongoengine.wtf import model_form
 from flask_wtf.csrf import CSRFProtect
 from text_inserts import cv_explanation
-from stock_data import get_iex_sandp, iex_stock_chart
+import stock_data
 import datetime
 import pandas as pd
 import db_models
@@ -64,12 +64,12 @@ def filter_dash():
 
 @app.route('/dash_v2/update')
 def update_dash():
-    get_iex_sandp()
+    stock_data.get_iex_sandp()
     for share in db_models.Share.objects:
         if share.status == 'Inactive':
             continue
         print share.name
-        iex_stock_chart(share.name)
+        stock_data.iex_stock_chart(share.name)
     shares = db_models.Share.objects()
     benchmark = db_models.Benchmark.objects(name='SandP 500').get()
     historic_data = crossfilter_portfolio(shares, benchmark)
@@ -202,9 +202,9 @@ def sell_share():
 
 @app.route('/cryptos')
 def get_crypto_prices():
-    crypto_data = get_live_prices()
+    # crypto_data = get_live_prices()
 
-    return render_template('cryptos.html', data=crypto_data)
+    return render_template('cryptos.html')
 
 
 @app.route('/monthly_report/<report_start>/<report_end>')
