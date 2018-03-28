@@ -1,9 +1,12 @@
 from flask import Flask, render_template, request, flash, redirect, url_for
 from flask_mongoengine import MongoEngine
 # from get_live_data import get_live_prices
-from share_data_compiling import compile_data, historic_totals, iex_historic_totals
+from share_data_compiling import compile_data, iex_historic_totals, crossfilter_portfolio
+from research_data import get_details, get_key_stats, get_financials
 from flask_mongoengine.wtf import model_form
 from flask_wtf.csrf import CSRFProtect
+from text_inserts import cv_explanation
+from stock_data import get_iex_sandp, iex_stock_chart
 import datetime
 import pandas as pd
 import db_models
@@ -33,6 +36,64 @@ def home_dash():
     return render_template('home_dash.html', data=data, metrics=historic_data['metric'])
 
 
+@app.route('/dash_v2')
+def filter_dash():
+    shares = db_models.Share.objects()
+    benchmark = db_models.Benchmark.objects(name='SandP 500').get()
+    historic_data = crossfilter_portfolio(shares, benchmark)
+    totals = historic_data.loc[historic_data.index.max()]
+    metrics = dict()
+    metrics['portfolio_gain'] = totals['gain_loss'].sum()
+    metrics['sp_gain'] = totals['sp_gain_loss'].sum()
+    metrics['invested'] = totals['invested'].sum()
+    metrics['pct_gain'] = (metrics['portfolio_gain']/metrics['invested'])*100
+    metrics['sp_pct_gain'] = (metrics['sp_gain']/metrics['invested'])*100
+    metrics['mean_gain'] = historic_data['gain_loss'].mean()
+    metrics['sp_mean_gain'] = historic_data['sp_gain_loss'].mean()
+    metrics['std_dev'] = historic_data['gain_loss'].std()
+    metrics['sp_std_dev'] = historic_data['sp_gain_loss'].std()
+    metrics['cof_var'] = (metrics['std_dev']/metrics['mean_gain'])*100
+    metrics['sp_cof_var'] = (metrics['sp_std_dev']/metrics['sp_mean_gain'])*100
+    metrics['value'] = totals['invested'].sum()+totals['gain_loss'].sum()
+    daysin = len(historic_data['date'].unique())
+    data = historic_data.to_json(orient='records')
+    text = dict()
+    text['cv_explanation'] = cv_explanation
+    return render_template('dash_v2.html', data=data, days=daysin, metrics=metrics, text=text)
+
+
+@app.route('/dash_v2/update')
+def update_dash():
+    get_iex_sandp()
+    for share in db_models.Share.objects:
+        if share.status == 'Inactive':
+            continue
+        print share.name
+        iex_stock_chart(share.name)
+    shares = db_models.Share.objects()
+    benchmark = db_models.Benchmark.objects(name='SandP 500').get()
+    historic_data = crossfilter_portfolio(shares, benchmark)
+    totals = historic_data.loc[historic_data.index.max()]
+    metrics = dict()
+    metrics['portfolio_gain'] = totals['gain_loss'].sum()
+    metrics['sp_gain'] = totals['sp_gain_loss'].sum()
+    metrics['invested'] = totals['invested'].sum()
+    metrics['pct_gain'] = (metrics['portfolio_gain'] / metrics['invested']) * 100
+    metrics['sp_pct_gain'] = (metrics['sp_gain'] / metrics['invested']) * 100
+    metrics['mean_gain'] = historic_data['gain_loss'].mean()
+    metrics['sp_mean_gain'] = historic_data['sp_gain_loss'].mean()
+    metrics['std_dev'] = historic_data['gain_loss'].std()
+    metrics['sp_std_dev'] = historic_data['sp_gain_loss'].std()
+    metrics['cof_var'] = (metrics['std_dev'] / metrics['mean_gain']) * 100
+    metrics['sp_cof_var'] = (metrics['sp_std_dev'] / metrics['sp_mean_gain']) * 100
+    metrics['value'] = totals['invested'].sum() + totals['gain_loss'].sum()
+    daysin = len(historic_data['date'].unique())
+    data = historic_data.to_json(orient='records')
+    text = dict()
+    text['cv_explanation'] = cv_explanation
+    return render_template('dash_v2.html', data=data, days=daysin, metrics=metrics, text=text)
+
+
 @app.route('/shares')
 def share_dash():
     shares = db_models.Share.objects()
@@ -48,10 +109,10 @@ def share_dash():
 def add_share():
     # Initiate form object from model
     ShareForm = model_form(db_models.Share)
-    share_form = ShareForm()
+    share_form = ShareForm(request.form)
     # If form validates collect data
-    if share_form.validate_on_submit():
-        share_to_add = db_models.Share(
+    # if share_form.validate_on_submit():
+    share_to_add = db_models.Share(
             str(request.form['name']),
             float(request.form['quantity']),
             str(request.form['ticker']),
@@ -60,15 +121,14 @@ def add_share():
             str(request.form['provider']),
             str(request.form['start_date'])
         )
-        print share_to_add
-        # Add form data as share object to DB
-        try:
-            share_to_add.save()
-            flash('The Investment has been added to the database!')
-            return redirect(url_for('hello_dash'))
-        except StandardError as e:
-            flash('Uh Oh something went wrong!!' + str(e))
-            return redirect(url_for('hello_dash'))
+    print share_to_add
+    # Add form data as share object to DB
+    try:
+        share_to_add.save()
+        return redirect(url_for('home_dash'))
+    except StandardError as e:
+        print e
+        return redirect(url_for('home_dash'))
 
 
 @app.route('/add_investment/crypto', methods=['POST'])
@@ -114,6 +174,32 @@ def share_page(share_name):
     return render_template('share_page.html', data=data)
 
 
+@app.route('/sell', methods=['POST', 'GET'])
+def sell():
+    shares = db_models.Share.objects()
+    SellShareForm = model_form(db_models.Share)
+    share_form = SellShareForm()
+    return render_template('sell_share.html', shares=shares, share_form=share_form)
+
+
+@app.route('/sell_share', methods=['POST'])
+def sell_share():
+    end_date = str(request.form['end_date'])
+    stock_name = str(request.form['name'])
+    out_fees = float(request.form['out_fees'])
+    # Update share object in DB
+    try:
+        # Find share object matching details
+        share_object = db_models.Share.objects(name=stock_name).get()
+        # Update object with sell details
+        share_object.update(status='Inactive', end_date=end_date, out_fees=out_fees)
+        flash('The sell has been recorded in the database!')
+        return redirect(url_for('hello_dash'))
+    except StandardError as e:
+        flash('Uh Oh something went wrong!!' + str(e))
+        return redirect(url_for('hello_dash'))
+
+
 @app.route('/cryptos')
 def get_crypto_prices():
     crypto_data = get_live_prices()
@@ -125,13 +211,21 @@ def get_crypto_prices():
 def get_monthly(report_start, report_end):
     shares = db_models.Share.objects()
     benchmark = db_models.Benchmark.objects(name='SandP 500').get()
-    historic_data = historic_totals(shares, benchmark)
+    historic_data = iex_historic_totals(shares, benchmark)
     portfolio_df = historic_data['df']
     # Generating a monthly review example
     report_selection = (portfolio_df.index >= report_start) & (portfolio_df.index < report_end)
     report_df = portfolio_df.loc[report_selection]
     report_html = report_df.to_html()
     return report_html
+
+
+@app.route('/research/<ticker>')
+def get_info_by_ticker(ticker):
+    financials = get_financials(ticker)
+    stats = get_key_stats(ticker)
+    details = get_details(ticker)
+    return render_template('stock_research.html', financials=financials.to_html(), stats=stats, details=details)
 
 
 if __name__ == '__main__':

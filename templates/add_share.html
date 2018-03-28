@@ -12,11 +12,11 @@
                 <label for="share_ticker">Ticker </label>
                 {{ share_form.ticker(class="form-control", id="share_ticker") }}
                 <label for="share_qty">Quantity Purchased </label>
-                {{ share_form.quantity(class="form-control", id="share_qty") }}
+                {{ share_form.quantity(class="form-control", id="share_qty", type="number", step=0.00001) }}
                 <label for="share_amnt">Amount Purchased ($)</label>
-                {{ share_form.amount_usd(class="form-control", id="share_amnt") }}
+                {{ share_form.amount_usd(class="form-control", id="share_amnt", type="number", step=0.001) }}
                 <label for="share_fees">Fees ($)</label>
-                {{ share_form.fees_usd(class="form-control", id="share_fees") }}
+                {{ share_form.fees_usd(class="form-control", id="share_fees", type="number", step=0.001) }}
                 <label for="share_provider">Provider</label>
                 {{ share_form.provider(class="form-control", id="share_provider", value="DriveWealth") }}
                 <label for="share_start">Date Purchased </label>

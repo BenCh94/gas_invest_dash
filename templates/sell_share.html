@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="row">
+    <div class="col-md-4"></div>
+        <form method='post' action="{{ url_for('sell_share') }}" style="color:white">
+            <input name=_csrf_token type=hidden value="{{ csrf_token() }}">
+            <label for="share_name">Share Name </label>
+            <input type="" name="sell_date">
+            <label for="sell_date">Sell Date</label>
+            <input type="date" name="sell_date">
+            <label for="out_fees">Outbound Fees</label>
+            <input type="date" name="sell_date">
+            <button type="submit" class="btn btn-primary" name="share_btn">Submit</button>
+        </form>
+    </div>
+{% endblock content %}

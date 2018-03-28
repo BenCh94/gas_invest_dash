@@ -21,6 +21,7 @@
                             <th>Price</th>
                             <th>$ P/L</th>
                             <th>% P/L</th>
+                            <th>EPS ($)</th>
                         </tr>
                         <tr>
                             <td>${{ share.invested }}</td>
@@ -28,6 +29,7 @@
                             <td>${{ share.latest_price }}</td>
                             <td>${{ share.current_gain_loss }}</td>
                             <td>{{ share.percentage_gain_loss }}%</td>
+                            <td>{{ share.current_gain_loss/share.quantity }}</td>
                         </tr>
                     </table>
                     <a href="/shares/{{ share.name }}" class="btn btn-primary">Details</a>

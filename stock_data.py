@@ -32,83 +32,9 @@ def add_data_to_db(data_object, stock):
     print update
 
 
-def get_stock_data(stock_name):
-    share_object = Share.objects(name=stock_name).get()
-    # Find the share in the database
-    call_params = dict(apikey=api_key,
-                       symbol=share_object.ticker,
-                       function="TIME_SERIES_DAILY_ADJUSTED",
-                       outputsize="full")
-    # Creating parameters for API call
-    url = alpha_vantage_base
-    r = requests.get(url, params=call_params)
-    stock_dates = r.json()
-    stock_dates = stock_dates['Time Series (Daily)']
-    print min(stock_dates)
-    start = share_object.start_date
-    # get the start date of investment
-    prices = dict()
-    # Creating empty dictionary for results
-    for key in stock_dates:
-        # Iterate over daily data
-        py_date = datetime.datetime.strptime(key, "%Y-%m-%d")
-        # Convert date string to date object
-        if py_date >= start:
-            # If the date is after the investment start, capture the data
-            prices[py_date.strftime("%d/%m/%Y")] = stock_dates[key]
-
-    stock_df = pd.DataFrame(prices)
-    # Creating a data frame for  share prices
-    stock_df = stock_df.T
-    # Reversing data frame so dates are rows
-    stock_df.index = pd.to_datetime(stock_df.index, format="%d/%m/%Y")
-    # Converting dates to Irish format
-    stock_df.index = stock_df.index.astype(str)
-    stock_data = clean_for_db(stock_df)
-    add_data_to_db(stock_data, share_object.name)
-
-
-def getSandP():
-    sandp = Benchmark.objects(name="SandP 500").get()
-    call_params = dict(apikey=api_key,
-                       symbol=sandp.ticker,
-                       function="TIME_SERIES_DAILY_ADJUSTED",
-                       outputsize="full")
-    # Creating parameters for API call
-    url = alpha_vantage_base
-    r = requests.get(url, params=call_params)
-    stock_dates = r.json()
-    print stock_dates
-    stock_dates = stock_dates['Time Series (Daily)']
-    start = sandp.start_date
-    # get the start date of investment
-    prices = dict()
-    # Creating empty dictionary for results
-    for key in stock_dates:
-        # Iterate over daily data
-        py_date = datetime.datetime.strptime(key, "%Y-%m-%d")
-        # Convert date string to date object
-        if py_date >= start:
-            # If the date is after the investment start, capture the data
-            prices[py_date.strftime("%d/%m/%Y")] = stock_dates[key]
-
-    stock_df = pd.DataFrame(prices)
-    # Creating a data frame for  share prices
-    stock_df = stock_df.T
-    # Reversing data frame so dates are rows
-    stock_df.index = pd.to_datetime(stock_df.index, format="%d/%m/%Y")
-    # Converting dates to Irish format
-    stock_df.index = stock_df.index.astype(str)
-    stock_data = clean_for_db(stock_df)
-    update_data = dict(daily_data=stock_data, last_update=datetime.date.today())
-    # Creating a dictionary of historical price data and last updated
-    update = Benchmark.objects(name="SandP 500").update(set__historical=update_data)
-    print update
-
-
 def get_iex_sandp():
     sandp = Benchmark.objects(name="SandP 500").get()
-    url = iex_base + "/stock/" + sandp.ticker + "/chart/1y"
+    url = iex_base + "/stock/" + "voo" + "/chart/5y"
     # Creating parameters for API call
     r = requests.get(url)
     stock_dates = r.json()
@@ -154,14 +80,62 @@ def iex_stock_chart(stock_name):
     new_dates = list(update_dates - dates)
     print new_dates
     for item in new_dates:
+        stock_data[str(item)]['quantity'] = share_object['quantity']
+        stock_data[str(item)]['fees_usd'] = share_object['fees_usd']
+        stock_data[str(item)]['amount_usd'] = share_object['amount_usd']
+        stock_data[str(item)]['invested'] = share_object['amount_usd'] + share_object['fees_usd']
+        stock_data[str(item)]['name'] = share_object['name']
         price_dict[str(item)] = stock_data[str(item)]
     add_data_to_db(price_dict, stock_name)
 
 
-getSandP()
+get_iex_sandp()
+
+
+def insert_amount_daily(share_name):
+    share_object = Share.objects(name=share_name).get()
+    historical = share_object.historical
+    days = historical['daily_data']
+    quantity = share_object['quantity']
+    fees = share_object['fees_usd']
+    amount = share_object['amount_usd']
+    new_historical = {}
+    for day in days.iterkeys():
+        new_historical[day] = days[day]
+        new_historical[day]['quantity'] = quantity
+        new_historical[day]['fees_usd'] = fees
+        new_historical[day]['amount_usd'] = amount
+        new_historical[day]['invested'] = new_historical[day]['amount_usd'] + new_historical[day]['fees_usd']
+        new_historical[day]['name'] = share_name
+    update_data = dict(daily_data=new_historical, last_update=datetime.date.today())
+    update = Share.objects(name=share_name).update(set__historical=update_data)
+    print update
 
 
 for share in Share.objects:
+    if share.status == 'Inactive':
+        continue
     print share.name
-    get_stock_data(share.name)
+    iex_stock_chart(share.name)
 
+
+def add_to_share(share_name, date, qty, amount, fees):
+    share_object = Share.objects(name=share_name).get()
+    historical = share_object.historical
+    days = historical['daily_data']
+    for day in days:
+        if day >= date:
+            days[day]['quantity'] = share_object['quantity'] + qty
+            days[day]['amount_usd'] = share_object['amount_usd'] + amount
+            days[day]['fees_usd'] = share_object['fees_usd'] + fees
+            days[day]['invested'] = days[day]['amount_usd'] + days[day]['fees_usd']
+            print days[day]
+    update_data = dict(daily_data=days, last_update=datetime.date.today())
+    update = Share.objects(name=share_name).update(set__historical=update_data)
+    new_invested = amount+fees+share_object['invested']
+    update_invested = Share.objects(name=share_name).update(set__invested=new_invested)
+    print update
+    print update_invested
+
+
+# add_to_share('TakeTwo', '2018-01-18', 2.1457, 250, 2.99)

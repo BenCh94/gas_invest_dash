@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block head_files %}
+    <script type="text/javascript">
+        var portfolio_data = {{ data|tojson }};
+    </script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/crossfilter.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/dc/dc.min.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='js/dc/dc.css') }}">
+{% endblock head_files %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-12" id="performance_box">
+            <div id="chart-performance-day"></div>
+            <div id="share-pie"></div>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+
+    </div>
+    <div class="row">
+        <div class="col-md-3" id="time_in_box">
+            <div id="time-in-text">
+                <h4>Trading Days</h4>
+                <p>"It's not about timing the market, it's about time in the market"</p>
+                <hr>
+            </div>
+            <div id="time-in-days">
+                {{ days }}
+            </div>
+        </div>
+        <div class="col-md-5" id="gains_box">
+            <table>
+                <tr class="header_row">
+                    <th>Gain %</th>
+                    <th>Gain $</th>
+                    <th>Mean %</th>
+                    <th>Deviation</th>
+                    <th>CV
+                        <a href="#" data-toggle="tooltip" title="{{ text.cv_explanation }}">?</a>
+                    </th>
+                </tr>
+                <tr class="gas_row">
+                    <td>{{ metrics.pct_gain }}</td>
+                    <td>{{ metrics.portfolio_gain }}</td>
+                    <td>{{ metrics.mean_gain }}</td>
+                    <td>{{ metrics.std_dev }}</td>
+                    <td>{{ metrics.cof_var }}</td>
+                </tr>
+                <tr class="sp_row">
+                    <td>{{ metrics.sp_pct_gain }}</td>
+                    <td>{{ metrics.sp_gain }}</td>
+                    <td>{{ metrics.sp_mean_gain }}</td>
+                    <td>{{ metrics.sp_std_dev }}</td>
+                    <td>{{ metrics.sp_cof_var }}</td>
+                </tr>
+            </table>
+        </div>
+        <div class="col-md-3" id="metrics_box">
+            <table>
+                <tr class="header_row">
+                    <th>Invested</th>
+                    <th>Current Value</th>
+                </tr>
+                <tr class="gas_row">
+                    <td>{{ metrics.invested }}</td>
+                    <td>{{ metrics.value }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/dash_v2.js') }}"></script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
+{% endblock content %}

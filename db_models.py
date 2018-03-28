@@ -12,8 +12,11 @@ class Share(db.Document):
     ticker = db.StringField(required=True)
     amount_usd = db.FloatField()
     fees_usd = db.FloatField()
+    out_fees = db.FloatField()
     provider = db.StringField()
     start_date = db.DateTimeField()
+    status = db.StringField()
+    end_date = db.DateTimeField()
     historical = db.EmbeddedDocumentField(HistoricalData)
     meta = {'collection': 'shares'}
 

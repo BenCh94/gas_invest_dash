@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.css') }}">
     <script type="text/javascript" src="{{ url_for('static', filename='bootstrap/js/bootstrap.js') }}"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="icon" href="https://vignette.wikia.nocookie.net/adventuretimewithfinnandjake/images/0/07/Waving_Snail.png/revision/latest?cb=20120729225549">
     {% block head_files %}
 
     {% endblock head_files %}
@@ -20,10 +21,12 @@
   <a class="navbar-brand" href="/">Gas Investments</a>
   <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
     <div class="navbar-nav mr-auto">
-      <a class="nav-item nav-link {% if request.path=='/' %} active{% endif %}" href="/">Home</a>
-      <a class="nav-item nav-link {% if request.path=='/shares' %} active{% endif %}" href="/shares">Shares</a>
+      <a class="nav-item nav-link{% if request.path=='/dash_v2' %} active{% endif %}" href="/dash_v2">Home</a>
+      <a class="nav-item nav-link{% if request.path=='/shares' %} active{% endif %}" href="/shares">Shares</a>
       <a class="nav-item nav-link{% if request.path=='/cryptos' %} active{% endif %}" href="/cryptos">Cryptos</a>
       <a class="nav-item nav-link{% if request.path=='/add_investment' %} active{% endif %}" href="/add_investment">Add</a>
+      <a class="nav-item nav-link{% if request.path=='/sell' %} active{% endif %}" href="/sell">Sell</a>
+      <a class="nav-item nav-link{% if request.path=='/dash_v2/update' %} active{% endif %}" href="dash_v2/update">Update Stocks</a>
     </div>
   </div>
 </nav>
