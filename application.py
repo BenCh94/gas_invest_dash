@@ -13,7 +13,7 @@ import db_models
 import os
 
 
-app = Flask(__name__)
+application = app = Flask(__name__)
 app.config['MONGODB_SETTINGS'] = {
     'db': os.environ.get('mongo_db'),
     'host': os.environ.get('mongo_host'),
