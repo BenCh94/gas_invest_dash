@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, flash, redirect, url_for
 from flask_mongoengine import MongoEngine
-from flask_httpauth import HTTPBasicAuth
+# from flask_httpauth import HTTPBasicAuth
 # from get_live_data import get_live_prices
 from share_data_compiling import compile_data, iex_historic_totals, crossfilter_portfolio
 from research_data import get_details, get_key_stats, get_financials
@@ -19,7 +19,7 @@ users = {
 
 
 application = app = Flask(__name__)
-auth = HTTPBasicAuth()
+# auth = HTTPBasicAuth()
 app.config['MONGODB_SETTINGS'] = {
     'db': os.environ.get('mongo_db'),
     'host': os.environ.get('mongo_host'),
@@ -31,11 +31,11 @@ db = MongoEngine(app)
 csrf = CSRFProtect(app)
 app.secret_key = os.environ.get('secret_key')
 
-@auth.get_password
-def get_pw(username):
-    if username in users:
-        return users.get(username)
-    return None
+# @auth.get_password
+# def get_pw(username):
+#     if username in users:
+#         return users.get(username)
+#     return None
 
 
 @app.route('/')
@@ -118,7 +118,7 @@ def share_dash():
 
 
 @app.route('/add_investment/share', methods=['POST'])
-@auth.login_required
+# @auth.login_required
 def add_share():
     # Initiate form object from model
     ShareForm = model_form(db_models.Share)
@@ -145,7 +145,7 @@ def add_share():
 
 
 @app.route('/add_investment/crypto', methods=['POST'])
-@auth.login_required
+# @auth.login_required
 def add_crypto():
     # Collect form data and add to DB
     crypto_to_add = db_models.Crypto(
@@ -168,7 +168,7 @@ def add_crypto():
 
 
 @app.route('/add_investment', methods=['GET', 'POST'])
-@auth.login_required
+# @auth.login_required
 def add_investment():
     ShareForm = model_form(db_models.Share)
     share_form = ShareForm()
@@ -190,7 +190,7 @@ def share_page(share_name):
 
 
 @app.route('/sell', methods=['POST', 'GET'])
-@auth.login_required
+# @auth.login_required
 def sell():
     shares = db_models.Share.objects()
     SellShareForm = model_form(db_models.Share)
@@ -199,7 +199,7 @@ def sell():
 
 
 @app.route('/sell_share', methods=['POST'])
-@auth.login_required
+# @auth.login_required
 def sell_share():
     end_date = str(request.form['end_date'])
     stock_name = str(request.form['name'])
