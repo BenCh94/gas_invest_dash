@@ -177,6 +177,12 @@ def add_investment():
     return render_template('add_share.html', share_form=share_form, crypto_form=crypto_form)
 
 
+@app.route('/add_to_share')
+def add_to_share():
+    # result = stock_data.add_to_share('Disney', '2018-04-05', 1.0051, 102, 2.99)
+    return 'done'
+
+
 @app.route('/shares/<share_name>')
 def share_page(share_name):
     name = str(share_name)

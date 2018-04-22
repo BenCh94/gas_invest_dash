@@ -132,10 +132,14 @@ def add_to_share(share_name, date, qty, amount, fees):
             print days[day]
     update_data = dict(daily_data=days, last_update=datetime.date.today())
     update = Share.objects(name=share_name).update(set__historical=update_data)
-    new_invested = amount+fees+share_object['invested']
-    update_invested = Share.objects(name=share_name).update(set__invested=new_invested)
+    new_qty = share_object['quantity'] + qty
+    new_amnt = share_object['amount_usd'] + amount
+    new_fees = share_object['fees_usd'] + fees
+    update_qty = Share.objects(name=share_name).update(set__quantity=new_qty)
+    update_amnt = Share.objects(name=share_name).update(set__amount_usd=new_amnt)
+    update_fees = Share.objects(name=share_name).update(set__fees_usd=new_fees)
     print update
-    print update_invested
+    print update_qty, update_amnt, update_fees
 
 
-# add_to_share('TakeTwo', '2018-01-18', 2.1457, 250, 2.99)
+
