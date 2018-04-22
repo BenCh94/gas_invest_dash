@@ -31,6 +31,7 @@ db = MongoEngine(app)
 csrf = CSRFProtect(app)
 app.secret_key = os.environ.get('secret_key')
 
+
 @auth.get_password
 def get_pw(username):
     if username in users:
