@@ -22,8 +22,8 @@ def get_cryptos_db():
 crypto_quantity = get_cryptos_db()
 crypto_live_data = get_live_prices()
 eth_value = float(crypto_live_data['ether'][0]['price_usd'])*(0.45+0.29)
-print eth_value
+print(eth_value)
 xrp_value = float(crypto_live_data['ripple'][0]['price_usd'])*154.04
-print xrp_value
-print eth_value+xrp_value - (243.76+7.08)
+print(xrp_value)
+print(eth_value+xrp_value - (243.76+7.08))
 

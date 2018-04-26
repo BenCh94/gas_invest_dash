@@ -179,7 +179,7 @@ def iex_historic_totals(share_objects, benchmark):
                         sp_best="{0:.2f}".format(sp_best),
                         sp_worst="{0:.2f}".format(sp_worst),
                         sp_cv="{0:.2f}".format(abs(sp_std/abs(sp_mean))))
-    print total_performance.head()
+    print(total_performance.head())
     return dict(df=total_performance, metric=metrics_dict)
 
 

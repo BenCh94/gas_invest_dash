@@ -29,7 +29,7 @@ def add_data_to_db(data_object, stock):
     update_data = dict(daily_data=data_object, last_update=datetime.date.today())
     # Creating a dictionary of historical price data and last updated
     update = Share.objects(name=stock).update(set__historical=update_data)
-    print update
+    print(update)
 
 
 def get_iex_sandp():
@@ -42,7 +42,7 @@ def get_iex_sandp():
     prices_df = pd.DataFrame(stock_dates)
     # Convert date column
     prices_df['date'] = pd.to_datetime(prices_df['date'])
-    print prices_df['date'].max()
+    print(prices_df['date'].max())
     # filter results after start date
     invested_df = prices_df[prices_df['date'] >= sandp.start_date]
     invested_df.index = invested_df['date']
@@ -51,7 +51,7 @@ def get_iex_sandp():
     update_data = dict(daily_data=stock_data, last_update=datetime.date.today())
     # Creating a dictionary of historical price data and last updated
     update = Benchmark.objects(name="SandP 500").update(set__historical=update_data)
-    print update
+    print(update)
 
 
 def iex_stock_chart(stock_name):
@@ -67,7 +67,7 @@ def iex_stock_chart(stock_name):
     prices_df = pd.DataFrame(prices_chart)
     # Convert date column
     prices_df['date'] = pd.to_datetime(prices_df['date'])
-    print prices_df['date'].max()
+    print(prices_df['date'].max())
     current_price_data = share_object.historical.daily_data
     price_dict = dict(current_price_data)
     dates = set(price_dict.keys())
@@ -78,7 +78,7 @@ def iex_stock_chart(stock_name):
     stock_data = clean_iex_data(invested_df)
     update_dates = set(stock_data.keys())
     new_dates = list(update_dates - dates)
-    print new_dates
+    print(new_dates)
     for item in new_dates:
         stock_data[str(item)]['quantity'] = share_object['quantity']
         stock_data[str(item)]['fees_usd'] = share_object['fees_usd']
@@ -109,7 +109,7 @@ def insert_amount_daily(share_name):
         new_historical[day]['name'] = share_name
     update_data = dict(daily_data=new_historical, last_update=datetime.date.today())
     update = Share.objects(name=share_name).update(set__historical=update_data)
-    print update
+    print(update)
 
 
 # for share in Share.objects:
@@ -129,7 +129,7 @@ def add_to_share(share_name, date, qty, amount, fees):
             days[day]['amount_usd'] = share_object['amount_usd'] + amount
             days[day]['fees_usd'] = share_object['fees_usd'] + fees
             days[day]['invested'] = days[day]['amount_usd'] + days[day]['fees_usd']
-            print days[day]
+            print(days[day])
     update_data = dict(daily_data=days, last_update=datetime.date.today())
     update = Share.objects(name=share_name).update(set__historical=update_data)
     new_qty = share_object['quantity'] + qty
@@ -138,8 +138,8 @@ def add_to_share(share_name, date, qty, amount, fees):
     update_qty = Share.objects(name=share_name).update(set__quantity=new_qty)
     update_amnt = Share.objects(name=share_name).update(set__amount_usd=new_amnt)
     update_fees = Share.objects(name=share_name).update(set__fees_usd=new_fees)
-    print update
-    print update_qty, update_amnt, update_fees
+    print(update)
+    print(update_qty, update_amnt, update_fees)
 
 
 

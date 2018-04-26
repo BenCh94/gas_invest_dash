@@ -55,7 +55,7 @@ def create_quant_df():
     # Insert company indexes xurrently at 250:300
     comp_dict = company_df[250:300].to_dict(orient='records')
     for company in comp_dict:
-        print company['Unnamed: 0']
+        print(company['Unnamed: 0'])
         get_stats_financial(company['symbol'], company['name'], company['Unnamed: 0'])
     quant_df = pd.DataFrame(stats_list)
     quant_df.to_csv('static/files/quant_analysis.csv')
@@ -83,7 +83,7 @@ def quant_calculations(quant_df):
     quant_df['snoa'] = quant_df.apply(percentile_scaled_net_assets, axis=1)
     quant_df['p_snoa'] = quant_df['snoa'].rank(pct=True)
     quant_df['p_ebitda'] = quant_df['EBITDA'].rank(pct=True)
-    print quant_df[quant_df['p_ebitda'] > 0.90]['ticker']
+    print(quant_df[quant_df['p_ebitda'] > 0.90]['ticker'])
 
 
 quant_calculations(quant_df)

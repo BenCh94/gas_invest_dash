@@ -81,7 +81,7 @@ def update_dash():
     for share in db_models.Share.objects:
         if share.status == 'Inactive':
             continue
-        print share.name
+        print(share.name)
         stock_data.iex_stock_chart(share.name)
     shares = db_models.Share.objects()
     benchmark = db_models.Benchmark.objects(name='SandP 500').get()
@@ -135,13 +135,13 @@ def add_share():
             str(request.form['provider']),
             str(request.form['start_date'])
         )
-    print share_to_add
+    print(share_to_add)
     # Add form data as share object to DB
     try:
         share_to_add.save()
         return redirect(url_for('home_dash'))
     except StandardError as e:
-        print e
+        print(e)
         return redirect(url_for('home_dash'))
 
 
@@ -159,11 +159,11 @@ def add_crypto():
     )
     try:
         result = crypto_to_add.save()
-        print result
+        print(result)
         flash('The Investment has been added to the database!')
         return redirect(url_for('hello_dash'))
     except StandardError as e:
-        print str(e)
+        print(str(e))
         flash('Uh Oh something went wrong!!' + str(e))
         return redirect(url_for('hello_dash'))
 
