@@ -141,5 +141,3 @@ def add_to_share(share_name, date, qty, amount, fees):
     print(update)
     print(update_qty, update_amnt, update_fees)
 
-
-

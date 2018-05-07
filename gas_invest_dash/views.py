@@ -1,36 +1,24 @@
+from gas_invest_dash import app
 from flask import Flask, render_template, request, flash, redirect, url_for
-from flask_mongoengine import MongoEngine
 from flask_httpauth import HTTPBasicAuth
-# from get_live_data import get_live_prices
-from share_data_compiling import compile_data, iex_historic_totals, crossfilter_portfolio
-from research_data import get_details, get_key_stats, get_financials
+import gas_invest_dash.db_models as db_models
 from flask_mongoengine.wtf import model_form
 from flask_wtf.csrf import CSRFProtect
 from text_inserts import cv_explanation
-import stock_data
 import datetime
 import pandas as pd
-import db_models
 import os
+
+
+import gas_invest_dash.research_data
+from gas_invest_dash.share_data_compiling import crossfilter_portfolio, iex_historic_totals
+from gas_invest_dash.stock_data import *
 
 users = {
     "Bench94": os.environ.get('BasicPass')
 }
 
-
-application = app = Flask(__name__)
 auth = HTTPBasicAuth()
-app.config['MONGODB_SETTINGS'] = {
-    'db': os.environ.get('mongo_db'),
-    'host': os.environ.get('mongo_host'),
-    'port': int(os.environ.get('mongo_port')),
-    'username': os.environ.get('mongo_username'),
-    'password': os.environ.get('mongo_password')
-}
-db = MongoEngine(app)
-csrf = CSRFProtect(app)
-app.secret_key = os.environ.get('secret_key')
-
 
 @auth.get_password
 def get_pw(username):
@@ -77,12 +65,12 @@ def filter_dash():
 
 @app.route('/dash_v2/update')
 def update_dash():
-    stock_data.get_iex_sandp()
+    get_iex_sandp()
     for share in db_models.Share.objects:
         if share.status == 'Inactive':
             continue
         print(share.name)
-        stock_data.iex_stock_chart(share.name)
+        iex_stock_chart(share.name)
     shares = db_models.Share.objects()
     benchmark = db_models.Benchmark.objects(name='SandP 500').get()
     historic_data = crossfilter_portfolio(shares, benchmark)
@@ -250,7 +238,3 @@ def get_info_by_ticker(ticker):
     stats = get_key_stats(ticker)
     details = get_details(ticker)
     return render_template('stock_research.html', financials=financials.to_html(), stats=stats, details=details)
-
-
-if __name__ == '__main__':
-    app.run()

@@ -1,4 +1,4 @@
-from application import db
+from gas_invest_dash import db
 
 
 class HistoricalData(db.EmbeddedDocument):
