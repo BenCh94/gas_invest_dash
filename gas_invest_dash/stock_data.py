@@ -118,26 +118,34 @@ def insert_amount_daily(share_name):
 #     print share.name
 #     iex_stock_chart(share.name)
 
-
-def add_to_share(share_name, date, qty, amount, fees):
-    share_object = Share.objects(name=share_name).get()
-    historical = share_object.historical
-    days = historical['daily_data']
-    for day in days:
-        if day >= date:
-            days[day]['quantity'] = share_object['quantity'] + qty
-            days[day]['amount_usd'] = share_object['amount_usd'] + amount
-            days[day]['fees_usd'] = share_object['fees_usd'] + fees
-            days[day]['invested'] = days[day]['amount_usd'] + days[day]['fees_usd']
-            print(days[day])
-    update_data = dict(daily_data=days, last_update=datetime.date.today())
-    update = Share.objects(name=share_name).update(set__historical=update_data)
-    new_qty = share_object['quantity'] + qty
-    new_amnt = share_object['amount_usd'] + amount
-    new_fees = share_object['fees_usd'] + fees
-    update_qty = Share.objects(name=share_name).update(set__quantity=new_qty)
-    update_amnt = Share.objects(name=share_name).update(set__amount_usd=new_amnt)
-    update_fees = Share.objects(name=share_name).update(set__fees_usd=new_fees)
-    print(update)
-    print(update_qty, update_amnt, update_fees)
+# Function is broken needs to be rewritten
+# def add_to_share(share_name, date, qty, amount, fees):
+#     # Do not use this function until it has been tested 
+#     format_date = datetime.datetime.strptime(date, "%d/%m/%Y")
+#     share_object = Share.objects(name=share_name).get()
+#     historical = share_object.historical
+#     days = historical['daily_data']
+#     for day in days.keys():
+#         if datetime.datetime.strptime(day, "%Y-%m-%d") >= format_date:
+#             days[day]['quantity'] = share_object['quantity'] + qty
+#             days[day]['amount_usd'] = share_object['amount_usd'] + amount
+#             days[day]['fees_usd'] = share_object['fees_usd'] + fees
+#             days[day]['invested'] = days[day]['invested'] + fees + amount
+#             print(days[day])
+#             # days[day]['quantity'] = qty
+#             # days[day]['amount_usd'] = amount
+#             # days[day]['fees_usd'] = fees
+#             # days[day]['invested'] = amount + fees
+#             # print(days[day])
+#     update_data = dict(daily_data=days, last_update=datetime.date.today())
+#     update = Share.objects(name=share_name).update(set__historical=update_data)
+#     new_qty = share_object['quantity'] + qty
+#     new_amnt = share_object['amount_usd'] + amount
+#     new_fees = share_object['fees_usd'] + fees
+#     update_qty = Share.objects(name=share_name).update(set__quantity=new_qty)
+#     update_amnt = Share.objects(name=share_name).update(set__amount_usd=new_amnt)
+#     update_fees = Share.objects(name=share_name).update(set__fees_usd=new_fees)
+#     print(update)
+#     print(update_qty, update_amnt, update_fees)
+#     return update
 

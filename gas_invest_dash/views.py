@@ -63,7 +63,7 @@ def filter_dash():
     return render_template('dash_v2.html', data=data, days=daysin, metrics=metrics, text=text)
 
 
-@app.route('/dash_v2/update')
+@app.route('/update')
 def update_dash():
     get_iex_sandp()
     for share in db_models.Share.objects:

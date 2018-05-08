@@ -26,7 +26,9 @@ var shareDim = ndx.dimension(function(d) {return d.name});
 
 // Filters //
 var total_gain = dateDim.group().reduceSum(dc.pluck('gain_loss'));
+var pct_gain = dateDim.group(function(d) {return (d.gain_loss/d.invested)*100})
 var sp_gain = dateDim.group().reduceSum(dc.pluck('sp_gain_loss'));
+var sp_pct = dateDim.group(function(d) {return (d.sp_gain_loss/d.invested)*100})
 var share_gain = shareDim.group().reduceSum(dc.pluck('invested'));
 var daysIn = shareDim.groupAll();
 
@@ -42,32 +44,45 @@ var colorScale = d3.scale.ordinal().range(['#003430', '#0D4E49', '#236863', '#41
 var dailyChart = dc.compositeChart("#chart-performance-day");
 var sharePieChart = dc.pieChart('#share-pie');
 
-dailyChart
-	.width(dailyWidth*0.8).height(450)
-	.title(function(d) {return d.key + ":" + d.value})
-	.compose([
-		dc.lineChart(dailyChart)
-			.dimension(dateDim)
-			.group(total_gain, 'Portfolio')
-			.renderArea(true)
-			.ordinalColors(['#17B121']),
-		dc.lineChart(dailyChart)
-			.dimension(dateDim)
-			.group(sp_gain, 'S and P 500')
-			.renderArea(true)
-			.ordinalColors(['#2969CE'])
-	])
-	.renderHorizontalGridLines(true)
-	.legend(dc.legend().x(50).y(10).itemHeight(13).gap(5))
-	.yAxisLabel('($)Gain/Loss')
-    .elasticY(true)
-	.x(d3.time.scale().domain([minDate, maxDate]));
+var makeGraphs = function(sp_vals, gas_vals){
+	dailyChart
+		.width(dailyWidth*0.8).height(450)
+		.title(function(d) {return d.key + ":" + d.value})
+		.compose([
+			dc.lineChart(dailyChart)
+				.dimension(dateDim)
+				.group(gas_vals, 'Portfolio')
+				.renderArea(true)
+				.ordinalColors(['#17B121']),
+			dc.lineChart(dailyChart)
+				.dimension(dateDim)
+				.group(sp_vals, 'S and P 500')
+				.renderArea(true)
+				.ordinalColors(['#2969CE'])
+		])
+		.renderHorizontalGridLines(true)
+		.legend(dc.legend().x(50).y(10).itemHeight(13).gap(5))
+		.yAxisLabel('($)Gain/Loss')
+	    .elasticY(true)
+		.x(d3.time.scale().domain([minDate, maxDate]));
 
-sharePieChart
-    .width(300).height(400)
-    .dimension(shareDim)
-    .group(share_gain)
-    .colors(colorScale)
-    .innerRadius(40);
+	sharePieChart
+	    .width(300).height(400)
+	    .dimension(shareDim)
+	    .group(share_gain)
+	    .colors(colorScale)
+	    .innerRadius(40);
 
-dc.renderAll();
+	dc.renderAll();
+}
+
+$(document).ready(function(){
+	makeGraphs(sp_gain, total_gain)
+	$('#pct_view').click(function(){
+		makeGraphs(sp_pct, pct_gain)
+	})
+
+	$('#dollar_view').click(function(){
+		makeGraphs(sp_gain, total_gain)
+	})
+})
