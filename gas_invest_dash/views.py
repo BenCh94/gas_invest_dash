@@ -11,7 +11,7 @@ import os
 
 
 import gas_invest_dash.research_data
-from gas_invest_dash.share_data_compiling import crossfilter_portfolio, iex_historic_totals
+from gas_invest_dash.share_data_compiling import crossfilter_portfolio, iex_historic_totals, compile_data
 from gas_invest_dash.stock_data import *
 
 users = {
