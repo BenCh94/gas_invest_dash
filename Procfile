@@ -1,1 +1,1 @@
-web: gunicorn application --log-file -
+web: gunicorn gas_invest_dash --log-file -
