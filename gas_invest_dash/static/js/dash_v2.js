@@ -10,6 +10,26 @@ function orderByDate(d){
     return d.date
 }
 
+// var reduceAddPerc = function(p, d) {
+// 	var gains = 0
+// 	var invested = 0
+// 	gains += d.gain_loss
+// 	invested += d.invested
+// 	p.value = (gains/invested)*100
+//     return p
+// };
+// var reduceRemovePerc = function(p, d) {
+//     var gains = 0
+// 	var invested = 0
+// 	gains -= d.gain_loss
+// 	invested -= d.invested
+// 	p.value = (gains/invested)*100
+//     return p
+// };
+// var reduceInitialPerc = function() {
+//     return {};
+// }; 
+
 portfolio_data = JSON.parse(portfolio_data);
 // console.log(portfolio_data);
 
@@ -26,10 +46,12 @@ var shareDim = ndx.dimension(function(d) {return d.name});
 
 // Filters //
 var total_gain = dateDim.group().reduceSum(dc.pluck('gain_loss'));
-var pct_gain = dateDim.group(function(d) {return (d.gain_loss/d.invested)*100})
+var total_invested = dateDim.group().reduceSum(dc.pluck('invested'));
+// var pct_gain = dateDim.group().reduce(reduceAddPerc, reduceRemovePerc, reduceInitialPerc);
 var sp_gain = dateDim.group().reduceSum(dc.pluck('sp_gain_loss'));
-var sp_pct = dateDim.group(function(d) {return (d.sp_gain_loss/d.invested)*100})
-var share_gain = shareDim.group().reduceSum(dc.pluck('invested'));
+// var sp_pct = dateDim.group().reduce(reduceAddPerc, reduceRemovePerc, reduceInitialPerc);
+var invested = dateDim.group().reduceSum(dc.pluck('invested'));
+var share_invested = shareDim.group().reduceSum(dc.pluck('invested'));
 var daysIn = shareDim.groupAll();
 
 
@@ -37,6 +59,7 @@ var daysIn = shareDim.groupAll();
 var minDate = dateDim.bottom(1)[0].date;
 var maxDate = dateDim.top(1)[0].date;
 var dailyWidth = $("#performance_box").width();
+var pageHeight = $(document).height();
 var colorScale = d3.scale.ordinal().range(['#003430', '#0D4E49', '#236863', '#41837E', '#699D99', '#2D8633', '#54A759', '#86C98A']);
 
 
@@ -46,7 +69,7 @@ var sharePieChart = dc.pieChart('#share-pie');
 
 var makeGraphs = function(sp_vals, gas_vals){
 	dailyChart
-		.width(dailyWidth*0.8).height(450)
+		.width(dailyWidth*0.8).height(pageHeight*0.5)
 		.title(function(d) {return d.key + ":" + d.value})
 		.compose([
 			dc.lineChart(dailyChart)
@@ -69,17 +92,57 @@ var makeGraphs = function(sp_vals, gas_vals){
 	sharePieChart
 	    .width(300).height(400)
 	    .dimension(shareDim)
-	    .group(share_gain)
+	    .group(share_invested)
 	    .colors(colorScale)
 	    .innerRadius(40);
 
 	dc.renderAll();
 }
 
+var makeGraphsPct = function(sp_vals, gas_vals){
+	dailyChart
+		.width(dailyWidth*0.8).height(pageHeight*0.5)
+		.title(function(d) {return d.key + ":" + d.value})
+		.compose([
+			dc.lineChart(dailyChart)
+				.dimension(dateDim)
+				.group(invested, 'Invested')
+				.renderArea(true)
+				.ordinalColors(['#FFFF5A']),
+			dc.lineChart(dailyChart)
+				.dimension(dateDim)
+				.group(gas_vals, 'Portfolio')
+				.renderArea(true)
+				.ordinalColors(['#17B121']),
+			dc.lineChart(dailyChart)
+				.dimension(dateDim)
+				.group(sp_vals, 'S and P 500')
+				.renderArea(true)
+				.ordinalColors(['#2969CE'])
+		])
+		.renderHorizontalGridLines(true)
+		.legend(dc.legend().x(50).y(10).itemHeight(13).gap(5))
+		.yAxisLabel('($)Gain/Loss')
+	    .elasticY(true)
+		.x(d3.time.scale().domain([minDate, maxDate]));
+
+
+	sharePieChart
+	    .width(300).height(400)
+	    .dimension(shareDim)
+	    .group(share_invested)
+	    .colors(colorScale)
+	    .innerRadius(40);
+
+	dc.renderAll();
+
+}
+
+
 $(document).ready(function(){
-	makeGraphs(sp_gain, total_gain)
+	makeGraphs(sp_gain, total_gain);
 	$('#pct_view').click(function(){
-		makeGraphs(sp_pct, pct_gain)
+		makeGraphsPct(sp_gain, total_gain)
 	})
 
 	$('#dollar_view').click(function(){

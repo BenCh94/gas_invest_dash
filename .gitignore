@@ -1,4 +1,4 @@
-# Created by .ignore support plugin (hsz.mobi)
+cd gas	# Created by .ignore support plugin (hsz.mobi)
 ### Python template
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -111,4 +111,7 @@ gen
 !.elasticbeanstalk/*.cfg.yml
 
 !.elasticbeanstalk/*.global.yml
+
+# Environemnt variables local file
+.envrc
 
