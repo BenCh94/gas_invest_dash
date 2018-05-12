@@ -10,6 +10,26 @@ function orderByDate(d){
     return d.date
 }
 
+var reduceAddPerc = function(p, d) {
+	var gains = 0
+	var invested = 0
+	gains += d.gain_loss
+	invested += d.invested
+	p.value = (gains/invested)*100
+    return p
+};
+var reduceRemovePerc = function(p, d) {
+    var gains = 0
+	var invested = 0
+	gains -= d.gain_loss
+	invested -= d.invested
+	p.value = (gains/invested)*100
+    return p
+};
+var reduceInitialPerc = function() {
+    return {};
+}; 
+
 portfolio_data = JSON.parse(portfolio_data);
 // console.log(portfolio_data);
 
@@ -26,10 +46,11 @@ var shareDim = ndx.dimension(function(d) {return d.name});
 
 // Filters //
 var total_gain = dateDim.group().reduceSum(dc.pluck('gain_loss'));
-var pct_gain = dateDim.group(function(d) {return (d.gain_loss/d.invested)*100})
+var total_invested = dateDim.group().reduceSum(dc.pluck('invested'));
+var pct_gain = dateDim.group().reduce(reduceAddPerc, reduceRemovePerc, reduceInitialPerc);
 var sp_gain = dateDim.group().reduceSum(dc.pluck('sp_gain_loss'));
-var sp_pct = dateDim.group(function(d) {return (d.sp_gain_loss/d.invested)*100})
-var share_gain = shareDim.group().reduceSum(dc.pluck('invested'));
+var sp_pct = dateDim.group().reduce(reduceAddPerc, reduceRemovePerc, reduceInitialPerc);
+var share_invested = shareDim.group().reduceSum(dc.pluck('invested'));
 var daysIn = shareDim.groupAll();
 
 
@@ -69,7 +90,7 @@ var makeGraphs = function(sp_vals, gas_vals){
 	sharePieChart
 	    .width(300).height(400)
 	    .dimension(shareDim)
-	    .group(share_gain)
+	    .group(share_invested)
 	    .colors(colorScale)
 	    .innerRadius(40);
 
