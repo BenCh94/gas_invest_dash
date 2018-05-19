@@ -59,7 +59,7 @@ var daysIn = shareDim.groupAll();
 var minDate = dateDim.bottom(1)[0].date;
 var maxDate = dateDim.top(1)[0].date;
 var dailyWidth = $("#performance_box").width();
-var pageHeight = $(document).height();
+var pageHeight = $(window).height();
 var colorScale = d3.scale.ordinal().range(['#003430', '#0D4E49', '#236863', '#41837E', '#699D99', '#2D8633', '#54A759', '#86C98A']);
 
 
