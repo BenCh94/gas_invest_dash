@@ -1,4 +1,4 @@
-autoenv==1.0.0
+attrs==18.1.0
 awsebcli==3.12.4
 blessed==1.14.2
 blinker==1.4
@@ -17,7 +17,7 @@ Flask-HTTPAuth==3.2.3
 Flask-Mail==0.9.1
 flask-mongoengine==0.9.3
 Flask-WTF==0.14.2
--e git+git@github.com:BenCh94/gas_invest_dash.git@6e0a69edd7fe8445bae5bffc0727c748aef1869b#egg=gas_invest_dash
+funcsigs==1.0.2
 gunicorn==19.7.1
 idna==2.6
 itsdangerous==0.24
@@ -25,11 +25,15 @@ Jinja2==2.9.6
 jmespath==0.9.3
 MarkupSafe==1.0
 mongoengine==0.13.0
+more-itertools==4.1.0
 numpy==1.13.1
 pandas==0.20.3
 pathspec==0.5.5
+pluggy==0.6.0
 pprint==0.1
+py==1.5.3
 pymongo==3.5.1
+pytest==3.5.1
 python-dateutil==2.6.1
 pytz==2017.2
 PyYAML==3.12
