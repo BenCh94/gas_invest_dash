@@ -67,7 +67,6 @@ def iex_stock_chart(stock_name):
     prices_df = pd.DataFrame(prices_chart)
     # Convert date column
     prices_df['date'] = pd.to_datetime(prices_df['date'])
-    print(prices_df['date'].max())
     current_price_data = share_object.historical.daily_data
     price_dict = dict(current_price_data)
     dates = set(price_dict.keys())
@@ -112,11 +111,24 @@ def insert_amount_daily(share_name):
     print(update)
 
 
-# for share in Share.objects:
-#     if share.status == 'Inactive':
-#         continue
-#     print share.name
-#     iex_stock_chart(share.name)
+def get_share_financial(ticker):
+    key_stats = "/stock/" + ticker + "/stats"
+    financials = "/stock/" + ticker + "/financials"
+    ticker_stats = requests.get(iex_base+key_stats)
+    fin_stats = requests.get(iex_base+financials)
+    fin_dict = fin_stats.json()
+    fin_dict['financials'] = list(reversed(fin_dict['financials']))
+    fin_dict['stats'] = ticker_stats.json()
+    return fin_dict
+
+def get_share_dailys(name):
+    name = str(name)
+    data = Share.objects.get_or_404(name=name)
+    share_daily_df = pd.DataFrame(data.historical.daily_data)
+    share_daily_df = share_daily_df.T
+    share_daily_df['date'] = share_daily_df.index
+    daily_data = share_daily_df.to_json(orient='records')
+    return daily_data
 
 # Function is broken needs to be rewritten
 # def add_to_share(share_name, date, qty, amount, fees):

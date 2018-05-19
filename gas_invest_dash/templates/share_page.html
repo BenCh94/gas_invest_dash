@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
 {% block head_files %}
     <script type="text/javascript">
-        var shareData = {{ data|tojson }};
+        var shareData = {{ daily_data|tojson }};
+        var shareFin = {{ fin_data|tojson }}
     </script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
 {% endblock head_files %}
@@ -13,48 +14,15 @@
     </div>
     <hr>
     <div class="row">
-        <div class="col-md-3" id="time_in_box">
-            <div id="time-in-text">
-                <h4>Trading Days</h4>
-                <p>"It's not about timing the market, it's about time in the market"</p>
-                <hr>
-            </div>
-            <div id="time-in-days"></div>
+        <div class="col-md-4" id="share-revenue-box">
+            <canvas id="share-revenue-chart"></canvas>
         </div>
-        <div class="col-md-5" id="gains_box">
-            <table>
-                <tr class="header_row">
-                    <th>High</th>
-                    <th>Low</th>
-                    <th>Current</th>
-                    <th>Deviation</th>
-                    <th>CV</th>
-                </tr>
-                <tr class="gas_row">
-                    <td id="high_val"></td>
-                    <td id="low_val"></td>
-                    <td id="current_val"></td>
-                    <td id="dev"></td>
-                    <td id="cv"></td>
-                </tr>
-            </table>
+        <div class="col-md-4" id="share-costrev-box">
+            <canvas id="share-costrev-chart"></canvas>
         </div>
-        <div class="col-md-3" id="metrics_box">
-            <table>
-                <tr class="header_row">
-                    <th>Best %</th>
-                    <th>Worst %</th>
-                </tr>
-                <tr class="gas_row">
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr class="sp_row">
-                    <td></td>
-                    <td></td>
-                </tr>
-            </table>
-        </div>
+    </div>
+     <div class="row">
+        
     </div>
     <script type="text/javascript" src="{{ url_for('static', filename='js/share_chart.js') }}"></script>
 {% endblock content %}

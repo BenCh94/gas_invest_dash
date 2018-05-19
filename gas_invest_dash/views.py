@@ -8,7 +8,8 @@ from text_inserts import cv_explanation
 import datetime
 import pandas as pd
 import os
-
+import pprint
+pp = pprint.PrettyPrinter(indent=4)
 
 import gas_invest_dash.research_data
 from gas_invest_dash.share_data_compiling import crossfilter_portfolio, iex_historic_totals, compile_data
@@ -176,13 +177,14 @@ def add_to_share():
 @app.route('/shares/<share_name>')
 def share_page(share_name):
     name = str(share_name)
-    data = db_models.Share.objects.get_or_404(name=name)
-    share_daily_df = pd.DataFrame(data.historical.daily_data)
-    share_daily_df = share_daily_df.T
-    share_daily_df['date'] = share_daily_df.index
-    data = share_daily_df.to_json(orient='records')
-
-    return render_template('share_page.html', data=data)
+    share_object = db_models.Share.objects.get_or_404(name=name)
+    ticker = share_object.ticker
+    # Pull share data from DB
+    daily_data = get_share_dailys(name)
+    # Pull financials from IEX api
+    fin_stats = get_share_financial(ticker)
+    pp.pprint(fin_stats)
+    return render_template('share_page.html', daily_data=daily_data, fin_data=fin_stats)
 
 
 @app.route('/sell', methods=['POST', 'GET'])
