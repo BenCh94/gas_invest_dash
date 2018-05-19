@@ -29,40 +29,17 @@ def get_pw(username):
     return None
 
 
-@app.route('/old_dashboard')
-def home_dash():
-    shares = db_models.Share.objects()
-    benchmark = db_models.Benchmark.objects(name='SandP 500').get()
-    historic_data = iex_historic_totals(shares, benchmark)
-    portfolio_df = historic_data['df']
-    data = portfolio_df.to_json(orient='records')
-    return render_template('home_dash.html', data=data, metrics=historic_data['metric'])
-
-
 @app.route('/')
 def filter_dash():
     shares = db_models.Share.objects()
     benchmark = db_models.Benchmark.objects(name='SandP 500').get()
     historic_data = crossfilter_portfolio(shares, benchmark)
     totals = historic_data.loc[historic_data.index.max()]
-    metrics = dict()
-    metrics['portfolio_gain'] = totals['gain_loss'].sum()
-    metrics['sp_gain'] = totals['sp_gain_loss'].sum()
-    metrics['invested'] = totals['invested'].sum()
-    metrics['pct_gain'] = (metrics['portfolio_gain']/metrics['invested'])*100
-    metrics['sp_pct_gain'] = (metrics['sp_gain']/metrics['invested'])*100
-    metrics['mean_gain'] = historic_data['gain_loss'].mean()
-    metrics['sp_mean_gain'] = historic_data['sp_gain_loss'].mean()
-    metrics['std_dev'] = historic_data['gain_loss'].std()
-    metrics['sp_std_dev'] = historic_data['sp_gain_loss'].std()
-    metrics['cof_var'] = (metrics['std_dev']/metrics['mean_gain'])*100
-    metrics['sp_cof_var'] = (metrics['sp_std_dev']/metrics['sp_mean_gain'])*100
-    metrics['value'] = totals['invested'].sum()+totals['gain_loss'].sum()
-    daysin = len(historic_data['date'].unique())
+    metrics = create_metrics_dict(totals, historic_data)
     data = historic_data.to_json(orient='records')
     text = dict()
     text['cv_explanation'] = cv_explanation
-    return render_template('dash_v2.html', data=data, days=daysin, metrics=metrics, text=text)
+    return render_template('dash_v2.html', data=data, metrics=metrics, text=text)
 
 
 @app.route('/update')
@@ -71,30 +48,16 @@ def update_dash():
     for share in db_models.Share.objects:
         if share.status == 'Inactive':
             continue
-        print(share.name)
         iex_stock_chart(share.name)
     shares = db_models.Share.objects()
     benchmark = db_models.Benchmark.objects(name='SandP 500').get()
     historic_data = crossfilter_portfolio(shares, benchmark)
     totals = historic_data.loc[historic_data.index.max()]
-    metrics = dict()
-    metrics['portfolio_gain'] = totals['gain_loss'].sum()
-    metrics['sp_gain'] = totals['sp_gain_loss'].sum()
-    metrics['invested'] = totals['invested'].sum()
-    metrics['pct_gain'] = (metrics['portfolio_gain'] / metrics['invested']) * 100
-    metrics['sp_pct_gain'] = (metrics['sp_gain'] / metrics['invested']) * 100
-    metrics['mean_gain'] = historic_data['gain_loss'].mean()
-    metrics['sp_mean_gain'] = historic_data['sp_gain_loss'].mean()
-    metrics['std_dev'] = historic_data['gain_loss'].std()
-    metrics['sp_std_dev'] = historic_data['sp_gain_loss'].std()
-    metrics['cof_var'] = (metrics['std_dev'] / metrics['mean_gain']) * 100
-    metrics['sp_cof_var'] = (metrics['sp_std_dev'] / metrics['sp_mean_gain']) * 100
-    metrics['value'] = totals['invested'].sum() + totals['gain_loss'].sum()
-    daysin = len(historic_data['date'].unique())
+    metrics = create_metrics_dict(totals, historic_data)
     data = historic_data.to_json(orient='records')
     text = dict()
     text['cv_explanation'] = cv_explanation
-    return render_template('dash_v2.html', data=data, days=daysin, metrics=metrics, text=text)
+    return render_template('dash_v2.html', data=data, metrics=metrics, text=text)
 
 
 @app.route('/shares')
@@ -106,6 +69,19 @@ def share_dash():
                            shares=data_to_view['col_shares'],
                            total_gain=data_to_view['total_p_l'],
                            total_percent=data_to_view['total_prcnt'])
+
+
+@app.route('/shares/<share_name>')
+def share_page(share_name):
+    name = str(share_name)
+    share_object = db_models.Share.objects.get_or_404(name=name)
+    ticker = share_object.ticker
+    # Pull share data from DB
+    daily_data = get_share_dailys(name)
+    # Pull financials from IEX api
+    fin_stats = get_share_financial(ticker)
+    pp.pprint(fin_stats)
+    return render_template('share_page.html', daily_data=daily_data, fin_data=fin_stats)
 
 
 @app.route('/add_investment/share', methods=['POST'])
@@ -172,19 +148,6 @@ def add_investment():
 def add_to_share():
     # result = stock_data.add_to_share('Disney', '2018-04-05', 1.0051, 102, 2.99)
     return 'done'
-
-
-@app.route('/shares/<share_name>')
-def share_page(share_name):
-    name = str(share_name)
-    share_object = db_models.Share.objects.get_or_404(name=name)
-    ticker = share_object.ticker
-    # Pull share data from DB
-    daily_data = get_share_dailys(name)
-    # Pull financials from IEX api
-    fin_stats = get_share_financial(ticker)
-    pp.pprint(fin_stats)
-    return render_template('share_page.html', daily_data=daily_data, fin_data=fin_stats)
 
 
 @app.route('/sell', methods=['POST', 'GET'])
