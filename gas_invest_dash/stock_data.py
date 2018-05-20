@@ -1,48 +1,43 @@
-from db_models import Share, Benchmark
-import pandas as pd
-import requests
+""" Functions for interacting with the IEX API and importing the data into the DB """
 import datetime
 import os
+from gas_invest_dash.db_models import Share, Benchmark
+import pandas as pd
+import requests
 
 
 # File for getting historical daily data
-alpha_vantage_base = "https://www.alphavantage.co/query?"
+ALPHA_VANTAGE_BASE = "https://www.alphavantage.co/query?"
 # IEX Base url
-iex_base = "https://api.iextrading.com/1.0"
+IEX_BASE = "https://api.iextrading.com/1.0"
 # data source API base URL
-api_key = os.environ.get('alpha_api_key')
+API_KEY = os.environ.get('alpha_API_KEY')
 # API Key pulled from environment variables
 
-# Function formats data for the DB
-def clean_for_db(df):
-    df.columns = ['open', 'high', 'low', 'close', 'adj_close', 'volume', 'dividend_amount', 'split_cof']
-    df = df.to_dict(orient='index')
-    return df
-
-# Function cleans data from IEX api for DB
-def clean_iex_data(df):
-    cleaned_df = df.to_dict(orient='index')
+def clean_iex_data(iex_data):
+    """Function cleans data from IEX api for DB"""
+    cleaned_df = iex_data.to_dict(orient='index')
     return cleaned_df
 
-# Adds data to the database
 def add_data_to_db(data_object, stock):
+    """ Adds data to the database"""
     update_data = dict(daily_data=data_object, last_update=datetime.date.today())
     # Creating a dictionary of historical price data and last updated
     update = Share.objects(name=stock).update(set__historical=update_data)
-    print(update)
+    print update
 
-# Function gets data for the S and P 500 benchmark
 def get_iex_sandp():
+    """Function gets data for the S and P 500 benchmark"""
     sandp = Benchmark.objects(name="SandP 500").get()
-    url = iex_base + "/stock/" + "voo" + "/chart/5y"
+    url = IEX_BASE + "/stock/" + "voo" + "/chart/5y"
     # Creating parameters for API call
-    r = requests.get(url)
-    stock_dates = r.json()
+    api_req = requests.get(url)
+    stock_dates = api_req.json()
     # Convert to a dataframe
     prices_df = pd.DataFrame(stock_dates)
     # Convert date column
     prices_df['date'] = pd.to_datetime(prices_df['date'])
-    print(prices_df['date'].max())
+    print prices_df['date'].max()
     # filter results after start date
     invested_df = prices_df[prices_df['date'] >= sandp.start_date]
     invested_df.index = invested_df['date']
@@ -51,18 +46,18 @@ def get_iex_sandp():
     update_data = dict(daily_data=stock_data, last_update=datetime.date.today())
     # Creating a dictionary of historical price data and last updated
     update = Benchmark.objects(name="SandP 500").update(set__historical=update_data)
-    print(update)
+    print update
 
-# Function gets share chart from IEX api
 def iex_stock_chart(stock_name):
+    """Function gets share chart from IEX api"""
     share_object = Share.objects(name=stock_name).get()
     # Find the share in the database
     ticker = share_object.ticker
     # Querying IEX
-    url = iex_base+"/stock/"+ticker+"/chart/1m"
-    r = requests.get(url)
+    url = IEX_BASE+"/stock/"+ticker+"/chart/1m"
+    api_req = requests.get(url)
     # Get data from IEX
-    prices_chart = r.json()
+    prices_chart = api_req.json()
     # Convert to a dataframe
     prices_df = pd.DataFrame(prices_chart)
     # Convert date column
@@ -77,7 +72,7 @@ def iex_stock_chart(stock_name):
     stock_data = clean_iex_data(invested_df)
     update_dates = set(stock_data.keys())
     new_dates = list(update_dates - dates)
-    print(new_dates)
+    print new_dates
     for item in new_dates:
         stock_data[str(item)]['quantity'] = share_object['quantity']
         stock_data[str(item)]['fees_usd'] = share_object['fees_usd']
@@ -88,39 +83,39 @@ def iex_stock_chart(stock_name):
     add_data_to_db(price_dict, stock_name)
 
 
-# Function inserts buy information into share historical data
 def insert_amount_daily(share_name):
+    """Function inserts buy information into share historical data"""
     share_object = Share.objects(name=share_name).get()
     historical = share_object.historical
     days = historical['daily_data']
     quantity = share_object['quantity']
     fees = share_object['fees_usd']
     amount = share_object['amount_usd']
-    new_historical = {}
+    new_hist = {}
     for day in days.iterkeys():
-        new_historical[day] = days[day]
-        new_historical[day]['quantity'] = quantity
-        new_historical[day]['fees_usd'] = fees
-        new_historical[day]['amount_usd'] = amount
-        new_historical[day]['invested'] = new_historical[day]['amount_usd'] + new_historical[day]['fees_usd']
-        new_historical[day]['name'] = share_name
-    update_data = dict(daily_data=new_historical, last_update=datetime.date.today())
+        new_hist[day] = days[day]
+        new_hist[day]['quantity'] = quantity
+        new_hist[day]['fees_usd'] = fees
+        new_hist[day]['amount_usd'] = amount
+        new_hist[day]['invested'] = new_hist[day]['amount_usd'] + new_hist[day]['fees_usd']
+        new_hist[day]['name'] = share_name
+    update_data = dict(daily_data=new_hist, last_update=datetime.date.today())
     update = Share.objects(name=share_name).update(set__historical=update_data)
-    print(update)
+    print update
 
-# Function gets financials from the IEX api 
 def get_share_financial(ticker):
+    """Function gets financials from the IEX api"""
     key_stats = "/stock/" + ticker + "/stats"
     financials = "/stock/" + ticker + "/financials"
-    ticker_stats = requests.get(iex_base+key_stats)
-    fin_stats = requests.get(iex_base+financials)
+    ticker_stats = requests.get(IEX_BASE+key_stats)
+    fin_stats = requests.get(IEX_BASE+financials)
     fin_dict = fin_stats.json()
     fin_dict['financials'] = list(reversed(fin_dict['financials']))
     fin_dict['stats'] = ticker_stats.json()
     return fin_dict
 
-# Function returns share daily data from DB
 def get_share_dailys(name):
+    """Function returns share daily data from DB"""
     name = str(name)
     data = Share.objects.get_or_404(name=name)
     share_daily_df = pd.DataFrame(data.historical.daily_data)
@@ -129,28 +124,27 @@ def get_share_dailys(name):
     daily_data = share_daily_df.to_json(orient='records')
     return daily_data
 
-
-# Creates metrics from stock data
 def create_metrics_dict(totals, historic_data):
+    """Creates metrics from stock data"""
     metrics = dict()
-    metrics['portfolio_gain'] = totals['gain_loss'].sum()
-    metrics['sp_gain'] = totals['sp_gain_loss'].sum()
-    metrics['invested'] = totals['invested'].sum()
-    metrics['pct_gain'] = (metrics['portfolio_gain']/metrics['invested'])*100
-    metrics['sp_pct_gain'] = (metrics['sp_gain']/metrics['invested'])*100
-    metrics['mean_gain'] = historic_data['gain_loss'].mean()
-    metrics['sp_mean_gain'] = historic_data['sp_gain_loss'].mean()
-    metrics['std_dev'] = historic_data['gain_loss'].std()
-    metrics['sp_std_dev'] = historic_data['sp_gain_loss'].std()
-    metrics['cof_var'] = (metrics['std_dev']/metrics['mean_gain'])*100
-    metrics['sp_cof_var'] = (metrics['sp_std_dev']/metrics['sp_mean_gain'])*100
-    metrics['value'] = totals['invested'].sum()+totals['gain_loss'].sum()
+    metrics['portfolio_gain'] = float(totals['gain_loss'].sum())
+    metrics['sp_gain'] = float(totals['sp_gain_loss'].sum())
+    metrics['invested'] = float(totals['invested'].sum())
+    metrics['pct_gain'] = float((metrics['portfolio_gain']/metrics['invested'])*100)
+    metrics['sp_pct_gain'] = float((metrics['sp_gain']/metrics['invested'])*100)
+    metrics['mean_gain'] = float(historic_data['gain_loss'].mean())
+    metrics['sp_mean_gain'] = float(historic_data['sp_gain_loss'].mean())
+    metrics['std_dev'] = float(historic_data['gain_loss'].std())
+    metrics['sp_std_dev'] = float(historic_data['sp_gain_loss'].std())
+    metrics['cof_var'] = float((metrics['std_dev']/metrics['mean_gain'])*100)
+    metrics['sp_cof_var'] = float((metrics['sp_std_dev']/metrics['sp_mean_gain'])*100)
+    metrics['value'] = float(totals['invested'].sum()+totals['gain_loss'].sum())
     metrics['days_in'] = len(historic_data['date'].unique())
     return metrics
 
 # Function is broken needs to be rewritten
 # def add_to_share(share_name, date, qty, amount, fees):
-#     # Do not use this function until it has been tested 
+#     # Do not use this function until it has been tested
 #     format_date = datetime.datetime.strptime(date, "%d/%m/%Y")
 #     share_object = Share.objects(name=share_name).get()
 #     historical = share_object.historical
