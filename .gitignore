@@ -1,6 +1,10 @@
 cd gas	# Created by .ignore support plugin (hsz.mobi)
 ### Python template
+
+# Linter config file
+pylintrc
 # Byte-compiled / optimized / DLL files
+.pytest_cache/
 __pycache__/
 *.py[cod]
 *$py.class
