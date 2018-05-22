@@ -21,7 +21,7 @@ def clean_iex_data(iex_data):
 
 def add_data_to_db(data_object, stock):
     """ Adds data to the database"""
-    update_data = dict(daily_data=data_object, last_update=datetime.date.today())
+    update_data = dict(daily_data=data_object, last_update=datetime.date.now())
     # Creating a dictionary of historical price data and last updated
     update = Share.objects(name=stock).update(set__historical=update_data)
     print update
@@ -43,7 +43,7 @@ def get_iex_sandp():
     invested_df.index = invested_df['date']
     invested_df.index = invested_df.index.astype(str)
     stock_data = clean_iex_data(invested_df)
-    update_data = dict(daily_data=stock_data, last_update=datetime.date.today())
+    update_data = dict(daily_data=stock_data, last_update=datetime.date.now())
     # Creating a dictionary of historical price data and last updated
     update = Benchmark.objects(name="SandP 500").update(set__historical=update_data)
     print update
@@ -99,7 +99,7 @@ def insert_amount_daily(share_name):
         new_hist[day]['amount_usd'] = amount
         new_hist[day]['invested'] = new_hist[day]['amount_usd'] + new_hist[day]['fees_usd']
         new_hist[day]['name'] = share_name
-    update_data = dict(daily_data=new_hist, last_update=datetime.date.today())
+    update_data = dict(daily_data=new_hist, last_update=datetime.date.now())
     update = Share.objects(name=share_name).update(set__historical=update_data)
     print update
 
@@ -124,22 +124,25 @@ def get_share_dailys(name):
     daily_data = share_daily_df.to_json(orient='records')
     return daily_data
 
-def create_metrics_dict(totals, historic_data):
+def create_metrics_dict(totals, historic_data, update):
     """Creates metrics from stock data"""
     metrics = dict()
-    metrics['portfolio_gain'] = float(totals['gain_loss'].sum())
-    metrics['sp_gain'] = float(totals['sp_gain_loss'].sum())
-    metrics['invested'] = float(totals['invested'].sum())
-    metrics['pct_gain'] = float((metrics['portfolio_gain']/metrics['invested'])*100)
-    metrics['sp_pct_gain'] = float((metrics['sp_gain']/metrics['invested'])*100)
-    metrics['mean_gain'] = float(historic_data['gain_loss'].mean())
-    metrics['sp_mean_gain'] = float(historic_data['sp_gain_loss'].mean())
-    metrics['std_dev'] = float(historic_data['gain_loss'].std())
-    metrics['sp_std_dev'] = float(historic_data['sp_gain_loss'].std())
-    metrics['cof_var'] = float((metrics['std_dev']/metrics['mean_gain'])*100)
-    metrics['sp_cof_var'] = float((metrics['sp_std_dev']/metrics['sp_mean_gain'])*100)
-    metrics['value'] = float(totals['invested'].sum()+totals['gain_loss'].sum())
+    metrics['portfolio_gain'] = round(totals['gain_loss'].sum(), 2)
+    metrics['sp_gain'] = round(totals['sp_gain_loss'].sum(), 2)
+    metrics['invested'] = round(totals['invested'].sum(), 2)
+    metrics['pct_gain'] = round((metrics['portfolio_gain']/metrics['invested'])*100, 2)
+    metrics['sp_pct_gain'] = round((metrics['sp_gain']/metrics['invested'])*100, 2)
+    metrics['mean_gain'] = round(historic_data['gain_loss'].mean(), 2)
+    metrics['sp_mean_gain'] = round(historic_data['sp_gain_loss'].mean(), 2)
+    metrics['std_dev'] = round(historic_data['gain_loss'].std(), 2)
+    metrics['sp_std_dev'] = round(historic_data['sp_gain_loss'].std(), 2)
+    metrics['cof_var'] = round((metrics['std_dev']/metrics['mean_gain'])*100, 2)
+    metrics['sp_cof_var'] = round((metrics['sp_std_dev']/metrics['sp_mean_gain'])*100, 2)
+    metrics['value'] = round(totals['invested'].sum()+totals['gain_loss'].sum(), 2)
     metrics['days_in'] = len(historic_data['date'].unique())
+    update_datetime = datetime.datetime.strptime(update, "%Y-%m-%dT%H:%M:%S")
+    metrics['last_update'] = datetime.datetime.strftime(update_datetime, "%d/%m/%Y, %H:%M")
+    print metrics['last_update']
     return metrics
 
 # Function is broken needs to be rewritten
