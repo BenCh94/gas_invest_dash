@@ -54,6 +54,7 @@ def update_dash():
     benchmark = db_models.Benchmark.objects(name='SandP 500').get()
     historic_data = crossfilter_portfolio(shares, benchmark)
     totals = historic_data.loc[historic_data.index.max()]
+    last_updated = str(db_models.Share.objects.first().historical.last_update.isoformat())
     metrics = create_metrics_dict(totals, historic_data)
     data = historic_data.to_json(orient='records')
     text = dict()
