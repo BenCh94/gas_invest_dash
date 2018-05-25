@@ -21,7 +21,7 @@ def clean_iex_data(iex_data):
 
 def add_data_to_db(data_object, stock):
     """ Adds data to the database"""
-    update_data = dict(daily_data=data_object, last_update=datetime.date.now())
+    update_data = dict(daily_data=data_object, last_update=datetime.datetime.now())
     # Creating a dictionary of historical price data and last updated
     update = Share.objects(name=stock).update(set__historical=update_data)
     print update
@@ -43,7 +43,7 @@ def get_iex_sandp():
     invested_df.index = invested_df['date']
     invested_df.index = invested_df.index.astype(str)
     stock_data = clean_iex_data(invested_df)
-    update_data = dict(daily_data=stock_data, last_update=datetime.date.now())
+    update_data = dict(daily_data=stock_data, last_update=datetime.datetime.now())
     # Creating a dictionary of historical price data and last updated
     update = Benchmark.objects(name="SandP 500").update(set__historical=update_data)
     print update
@@ -99,7 +99,7 @@ def insert_amount_daily(share_name):
         new_hist[day]['amount_usd'] = amount
         new_hist[day]['invested'] = new_hist[day]['amount_usd'] + new_hist[day]['fees_usd']
         new_hist[day]['name'] = share_name
-    update_data = dict(daily_data=new_hist, last_update=datetime.date.now())
+    update_data = dict(daily_data=new_hist, last_update=datetime.datetime.now())
     update = Share.objects(name=share_name).update(set__historical=update_data)
     print update
 
