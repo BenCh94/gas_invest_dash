@@ -3,13 +3,21 @@
     <script type="text/javascript">
         var shareData = {{ daily_data|tojson }};
         var shareFin = {{ fin_data|tojson }}
+        var ticker = {{ ticker|tojson }}
     </script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
 {% endblock head_files %}
 {% block content %}
     <div class="row">
         <div class="col-md-12" id="share-price-box">
-            <canvas id="share-price-chart"></canvas>
+            <canvas id="share-price-chart" style="height:50%; width:95%"></canvas>
+             <div class="btn-group" id="price_charts">
+              <button type="button" class="btn btn-outline-success btn-md priceChart" id="1m">1M</butto>
+              <button type="button" class="btn btn-outline-success btn-md priceChart" id="6m">6M</button>
+              <button type="button" class="btn btn-outline-success btn-md priceChart" id="1y">1y</button>
+              <button type="button" class="btn btn-outline-success btn-md priceChart" id="5y">5y</button>
+              <button type="button" class="btn btn-outline-success btn-md" id="timeIn">Time In</button>
+            </div>
         </div>
     </div>
     <hr>

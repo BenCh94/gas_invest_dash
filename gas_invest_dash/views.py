@@ -81,8 +81,7 @@ def share_page(share_name):
     daily_data = get_share_dailys(name)
     # Pull financials from IEX api
     fin_stats = get_share_financial(ticker)
-    pp.pprint(fin_stats)
-    return render_template('share_page.html', daily_data=daily_data, fin_data=fin_stats)
+    return render_template('share_page.html', daily_data=daily_data, fin_data=fin_stats, ticker=ticker)
 
 
 @app.route('/add_investment/share', methods=['POST'])

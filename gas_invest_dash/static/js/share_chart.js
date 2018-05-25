@@ -1,7 +1,11 @@
-shareData = JSON.parse(shareData);
+shareData = JSON.parse(shareData);myLineChart = "";
+var myLineChart = "";
+var pageHeight = $(window).height();
+console.log(pageHeight);
+var pageWidth = $(window).width();
 // Utility Functions
 function getClosePrices(data){
-	closePrices = []
+	var closePrices = []
 	data.forEach(function(d){
 		closePrices.push(Number(d.close));
 	})
@@ -10,7 +14,7 @@ function getClosePrices(data){
 }
 
 function getDailyLabels(data){
-	days = []
+	var days = []
 	data.forEach(function(d){
 		var day = new Date(d.date)
 		days.push(day.toDateString());
@@ -125,20 +129,51 @@ var costRevSetting = {
         }
 }
 
+function redrawGraph(data, status){
+    myLineChart.destroy();
+    console.log(pageHeight*0.5);
+    // Price chart
+    var pricectx = document.getElementById("share-price-chart");
+    priceData =  {
+        labels: getDailyLabels(data),
+        datasets: [{
+            label: "Share Price",
+            backgroundColor: 'rgb(45, 134, 51, 0.2)',
+            borderColor: 'rgb(45, 134, 51)',
+            data: getClosePrices(data),
+        }]
+    };
+
+    myLineChart = new Chart(pricectx, {
+        type: 'line',
+        data: priceData,
+        options: priceOptions
+    });
+
+}
+
+function getSharePriceData(time){
+    ticker=ticker
+    $.get("https://api.iextrading.com/1.0/stock/"+ ticker +"/chart/"+time, 
+        function(data, status){
+            redrawGraph(data, status)
+    })
+}
+
 
 // Charts
 $(document).ready(function(){
-    var pageHeight = $(window).height();
-    var pageWidth = $(window).width();
-    // Price chart
-    $('#share-price-chart').height(pageHeight*0.5)
-    $('#share-price-chart').width(pageWidth)
-    // Rev Chart
-    $('#share-revenue-chart').height(pageHeight*0.3)
-    $('#share-revenue-chart').width(pageWidth/3)
+    $(".priceChart").click(function(e){
+        var time = e.target.id;
+        console.log(time)
+        getSharePriceData(time);
+    })
+    $('#timeIn').click(function(){
+        redrawGraph(shareData, 'Time In');
+    })
     var pricectx = document.getElementById("share-price-chart");
 
-    var myLineChart = new Chart(pricectx, {
+    myLineChart = new Chart(pricectx, {
         type: 'line',
         data: priceData,
         options: priceOptions
@@ -146,7 +181,7 @@ $(document).ready(function(){
 
     var revctx = document.getElementById("share-revenue-chart");
 
-    var myBarChart = new Chart(revctx, {
+    var myRevChart = new Chart(revctx, {
         type: 'bar',
         data: revData,
         options: revSetting
@@ -154,7 +189,7 @@ $(document).ready(function(){
 
     var costrevctx = document.getElementById("share-costrev-chart");
 
-    var myBarChart = new Chart(costrevctx, {
+    var myCosRevChart = new Chart(costrevctx, {
         type: 'bar',
         data: costRevData,
         options: costRevSetting

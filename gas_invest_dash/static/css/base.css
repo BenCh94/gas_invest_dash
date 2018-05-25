@@ -172,3 +172,9 @@ body {
     opacity: 1;
 }
 
+#price_charts{
+    position: absolute;
+    top: 15px;
+    right: 10px;
+    z-index: 1;
+}

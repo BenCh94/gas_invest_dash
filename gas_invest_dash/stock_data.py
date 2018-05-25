@@ -140,7 +140,7 @@ def create_metrics_dict(totals, historic_data, update):
     metrics['sp_cof_var'] = round((metrics['sp_std_dev']/metrics['sp_mean_gain'])*100, 2)
     metrics['value'] = round(totals['invested'].sum()+totals['gain_loss'].sum(), 2)
     metrics['days_in'] = len(historic_data['date'].unique())
-    update_datetime = datetime.datetime.strptime(update, "%Y-%m-%dT%H:%M:%S")
+    update_datetime = datetime.datetime.strptime(update, "%Y-%m-%dT%H:%M:%S.%f")
     metrics['last_update'] = datetime.datetime.strftime(update_datetime, "%d/%m/%Y, %H:%M")
     print metrics['last_update']
     return metrics
