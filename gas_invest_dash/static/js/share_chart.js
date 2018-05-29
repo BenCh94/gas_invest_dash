@@ -1,8 +1,7 @@
 shareData = JSON.parse(shareData);myLineChart = "";
-var myLineChart = "";
-var pageHeight = $(window).height();
+var pageHeight = $(document).height();
 console.log(pageHeight);
-var pageWidth = $(window).width();
+var pageWidth = $(document).width();
 // Utility Functions
 function getClosePrices(data){
 	var closePrices = []
@@ -60,10 +59,11 @@ var priceData =  {
             backgroundColor: 'rgb(45, 134, 51, 0.2)',
             borderColor: 'rgb(45, 134, 51)',
             data: getClosePrices(shareData),
-        }]
+        }],
     };
 
 var priceOptions = {
+    maintainAspectRatio: false,
     elements: {
         line: {
             tension: 0, // disables bezier curves
@@ -130,10 +130,9 @@ var costRevSetting = {
 }
 
 function redrawGraph(data, status){
-    myLineChart.destroy();
-    console.log(pageHeight*0.5);
     // Price chart
     var pricectx = document.getElementById("share-price-chart");
+    pricectx.height = pageHeight*0.5;
     priceData =  {
         labels: getDailyLabels(data),
         datasets: [{
@@ -143,6 +142,9 @@ function redrawGraph(data, status){
             data: getClosePrices(data),
         }]
     };
+    if(myLineChart){
+        myLineChart.destroy();
+    }
 
     myLineChart = new Chart(pricectx, {
         type: 'line',
@@ -164,20 +166,27 @@ function getSharePriceData(time){
 // Charts
 $(document).ready(function(){
     $(".priceChart").click(function(e){
+        $('.priceChart').removeClass('active');
+        $('#timeIn').removeClass('active');
+        $(this).addClass('active');
         var time = e.target.id;
         console.log(time)
         getSharePriceData(time);
     })
     $('#timeIn').click(function(){
+        $('.priceChart').removeClass('active');
+        $('#timeIn').addClass('active');
         redrawGraph(shareData, 'Time In');
     })
     var pricectx = document.getElementById("share-price-chart");
+    pricectx.height = pageHeight*0.5;
 
-    myLineChart = new Chart(pricectx, {
+    var myLineChart = new Chart(pricectx, {
         type: 'line',
         data: priceData,
         options: priceOptions
     });
+    $('#timeIn').addClass('active');
 
     var revctx = document.getElementById("share-revenue-chart");
 
