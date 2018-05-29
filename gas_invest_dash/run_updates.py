@@ -5,6 +5,7 @@ from gas_invest_dash.db_models import Share
 
 def update_stocks():
 	"""Function to update shares from the IEX API"""
+	print "INside the function"
 	get_iex_sandp()
 	for share in Share.objects:
 		print share.name
@@ -12,3 +13,5 @@ def update_stocks():
 			continue
 		iex_stock_chart(share.name)
 	return 'Complete'
+
+update_stocks()
