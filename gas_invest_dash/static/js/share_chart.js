@@ -1,25 +1,25 @@
 shareData = JSON.parse(shareData);myLineChart = "";
-var pageHeight = $(document).height();
+var pageHeight = $(window).height();
 console.log(pageHeight);
-var pageWidth = $(document).width();
+var pageWidth = $(window).width();
 // Utility Functions
 function getClosePrices(data){
-	var closePrices = []
-	data.forEach(function(d){
-		closePrices.push(Number(d.close));
-	})
-	console.log(closePrices)
-	return closePrices
+    var closePrices = []
+    data.forEach(function(d){
+        closePrices.push(Number(d.close));
+    })
+    console.log(closePrices)
+    return closePrices
 }
 
 function getDailyLabels(data){
-	var days = []
-	data.forEach(function(d){
-		var day = new Date(d.date)
-		days.push(day.toDateString());
-	})
-	console.log(days)
-	return days
+    var days = []
+    data.forEach(function(d){
+        var day = new Date(d.date)
+        days.push(day.toDateString());
+    })
+    console.log(days)
+    return days
 }
 
 function getRevenue(data){
@@ -68,8 +68,8 @@ var priceOptions = {
         line: {
             tension: 0, // disables bezier curves
         }
-	},
-	scales: {
+    },
+    scales: {
             xAxes: [{
                 time: {
                     unit: 'day'
