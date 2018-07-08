@@ -55,16 +55,16 @@ body {
     margin-top: 50px;
 }
 #price-chart-day {
-    background-color: #333;
+    background-color: #292b2c;
 }
 #gains_box {
-    background-color: #333;
+    background-color: #292b2c;
     padding-top: 30px;
     padding-bottom: 10px;
     margin: 0;
 }
 #metrics_box {
-    background-color: #333;
+    background-color: #292b2c;
     padding-top: 30px;
     padding-bottom: 10px;
     margin: 0;
@@ -107,7 +107,7 @@ body {
 #time-in-days {
     width: 100%;
     text-align: center;
-    background-color: #333;
+    background-color: #292b2c;
     color: #ffffff;
     font-size: 48px;
     margin: 0;
@@ -115,11 +115,11 @@ body {
 #time-in-text {
     padding: 10px;
     text-align: center;
-    background-color: #333;
+    background-color: #292b2c;
     color: #ffffff;
 }
 #time_in_box{
-    background-color: #333;
+    background-color: #292b2c;
     padding-left: 0;
     margin-left: 15px;
 }
@@ -177,4 +177,21 @@ body {
     top: 15px;
     right: 10px;
     z-index: 1;
+}
+
+.sidebar-sticky .nav .nav-link {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.sidebar-sticky .nav .nav-link:hover {
+    color: #ffffff;
+}
+
+.sidebar-sticky .nav .nav-link .active {
+    color: #ffffff;
+}
+
+.stock_item {
+    padding-left: 1.5em;
+    color: #699D99;
 }

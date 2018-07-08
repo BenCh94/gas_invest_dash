@@ -28,6 +28,11 @@ def get_pw(username):
         return users.get(username)
     return None
 
+@app.route('/test_sidebar')
+def testing_sidebar():
+
+    return render_template('sidebar_test.html')
+
 
 @app.route('/')
 def filter_dash():
@@ -40,7 +45,7 @@ def filter_dash():
     data = historic_data.to_json(orient='records')
     text = dict()
     text['cv_explanation'] = cv_explanation
-    return render_template('dash_v2.html', data=data, metrics=metrics, text=text)
+    return render_template('dash_v2.html', data=data, metrics=metrics, text=text, shares=shares)
 
 
 @app.route('/update')
@@ -59,7 +64,7 @@ def update_dash():
     data = historic_data.to_json(orient='records')
     text = dict()
     text['cv_explanation'] = cv_explanation
-    return render_template('dash_v2.html', data=data, metrics=metrics, text=text)
+    return render_template('dash_v2.html', data=data, metrics=metrics, text=text, shares=shares)
 
 
 @app.route('/shares')
@@ -80,9 +85,25 @@ def share_page(share_name):
     ticker = share_object.ticker
     # Pull share data from DB
     daily_data = get_share_dailys(name)
+    return render_template('share_page.html', daily_data=daily_data, ticker=ticker, name=name, share=share_object)
+
+
+@app.route('/shares/<share_name>/news')
+def share_news(share_name):
+    share_object = db_models.Share.objects.get_or_404(name=share_name)
+    ticker = share_object.ticker
+    # Pull news from IEX
+    news = get_share_news(ticker)
+    return render_template('share_news.html', news=news, name=share_name)
+
+
+@app.route('/shares/<share_name>/financials')
+def share_financials(share_name):
+    share_object = db_models.Share.objects.get_or_404(name=share_name)
+    ticker = share_object.ticker
     # Pull financials from IEX api
     fin_stats = get_share_financial(ticker)
-    return render_template('share_page.html', daily_data=daily_data, fin_data=fin_stats, ticker=ticker)
+    return render_template('share_financials.html', fin_data=fin_stats, name=share_name)
 
 
 @app.route('/add_investment/share', methods=['POST'])

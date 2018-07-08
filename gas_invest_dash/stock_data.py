@@ -145,6 +145,31 @@ def create_metrics_dict(totals, historic_data, update):
     print metrics['last_update']
     return metrics
 
+def get_share_news(ticker):
+    """Function gets news stories from IEX API"""
+    stock_news = "/stock/" + ticker + "/news"
+    ticker_news = requests.get(IEX_BASE+stock_news)
+    news_list = ticker_news.json()
+    return news_list
+
+
+def remove_from_share(ticker, date, fees):
+    format_date = datetime.datetime.strptime(date, "%d/%m/%Y")
+    share_object = Share.objects(ticker=ticker).get()
+    historical = share_object.historical
+    historical_df = pd.DataFrame(historical['daily_data'])
+    historical_df = historical_df.T
+    historical_df['old_dates'] = historical_df.index.values
+    historical_df.loc[historical_df['date'].isnull(), 'date'] = historical_df['old_dates']
+    historical_df['date'] = pd.to_datetime(historical_df['date'])
+    updated_df = historical_df[historical_df['date'] <= format_date]
+    updated_df = updated_df.drop('old_dates', 1)
+    updated_historical = {'last_update': datetime.datetime.now(), 'daily_data': updated_df.to_dict(orient='index')}
+    return share_object.update(status='Inactive', out_fees=fees, historical=updated_historical)
+
+
+
+
 # Function is broken needs to be rewritten
 # def add_to_share(share_name, date, qty, amount, fees):
 #     # Do not use this function until it has been tested
