@@ -22,7 +22,6 @@
   <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
     <div class="navbar-nav mr-auto">
       <a class="nav-item nav-link{% if request.path=='/' %} active{% endif %}" href="/">Home</a>
-      <a class="nav-item nav-link{% if request.path=='/shares' %} active{% endif %}" href="/shares">Shares</a>
       <!-- <a class="nav-item nav-link{% if request.path=='/cryptos' %} active{% endif %}" href="/cryptos">Cryptos</a> -->
       <a class="nav-item nav-link{% if request.path=='/add_investment' %} active{% endif %}" href="/add_investment">Add</a>
       <a class="nav-item nav-link{% if request.path=='/sell' %} active{% endif %}" href="/sell">Sell</a>
@@ -31,9 +30,28 @@
   </div>
 </nav>
 <div class="container-fluid">
-	{% block content %}
+  <div class="row">
+    <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+          <div class="sidebar-sticky">
+            <ul class="nav flex-column">
+              <li class="nav-item">
+                  <a class="nav-link active" href="/">
+                    <span data-feather="home"></span>
+                    Dashboard
+                  </a>
+              </li>
+              {% block sidebar_content %}
+              {% endblock sidebar_content %}
+            </ul>
+          </div>
+        </nav>
+        <main role="main" class="col-md-10">
+            {% block content %}
 
-	{% endblock  content %}
+            {% endblock  content %}
+        </main>
+  </div>
+  </div>
 </div>
 <p>Data provided for free by <a href="https://iextrading.com/developer/">IEX</a></p>
 </body>

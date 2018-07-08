@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block sidebar_content %}
+	<li class="nav-item">
+        <a class="nav-link" href="/shares/{{ name }}">
+            <span data-feather="Stock related news"></span>
+            {{ name }}
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/shares/{{ name }}/news">
+            <span data-feather="Stock related news"></span>
+            News
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/shares/{{ name }}/financials">
+            <span data-feather="bar-chart-2"></span>
+            Financials
+            </a>
+    </li>
+{% endblock sidebar_content %}
+{% block content %}
+<div class="row">
+	<div class="col-md-3">
+		<h3>IEX Latest News</h3>
+	</div>
+</div>
+<div class="row">
+     <div class="list-group col-md-5">
+        {% for story in news %}
+            <a href="{{ story.url }}" target="_blank" class="list-group-item list-group-item-action flex-column align-items-start">
+                <div class="d-flex w-100 justify-content-between">
+                  <h5 class="mb-1">{{ story.headline }}</h5>
+                  <small>{{ story.datetime }}</small>
+                </div>
+                <p class="mb-1">{{ story.summary }}</p>
+                <small>{{ story.related }}</small>
+            </a>
+        {% endfor %}
+     </div>
+</div>
+{% endblock content %}
