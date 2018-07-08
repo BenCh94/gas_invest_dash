@@ -8,73 +8,104 @@
 <script type="text/javascript" src="{{ url_for('static', filename='js/dc/dc.min.js') }}"></script>
 <link rel="stylesheet" href="{{ url_for('static', filename='js/dc/dc.css') }}">
 {% endblock head_files %}
+{% block sidebar_content %}
+    <li class="nav-item">
+        <a class="nav-link" href="/shares/trade">
+            <span data-feather="Add stock buys"></span>
+            Trades
+        </a>
+    </li>
+    <li class="nav-item">
+        <a href="#stockSubMenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle nav-link">Stocks</a>
+        <ul class="collapse list-unstyled" id="stockSubMenu">
+            {% for stock in shares %}
+            <li class="nav-item">
+                <a href="shares/{{ stock.name }}" class="nav-link stock_item">{{ stock.name }}</a>
+            </li>
+            {% endfor %}
+        </ul>
+    </li>
+    <li class="nav-item">
+        <a href="#watchSubMenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle nav-link">Watchlist</a>
+        <ul class="collapse list-unstyled" id="watchSubMenu">
+            <li class="nav-item">
+                <a href="#" class="nav-link stock_item">Watchlist 1</a>
+            </li>
+        </ul>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#">
+            <span data-feather="bar-chart-2"></span>
+            Reports
+            </a>
+    </li>
+{% endblock sidebar_content %}
 {% block content %}
-    <div class="row">
-        <div class="col-md-12" id="performance_box">
-            <div class="btn-group">
-              <button type="button" class="btn btn-primary" id="pct_view">Percentage View</button>
-              <button type="button" class="btn btn-primary" id="dollar_view">Dollar View</button>
+        <div class="row">
+            <div id="performance_box" style="width: 100%">
+                <div id="chart-performance-day"></div>
+                <div id="share_control">
+                    <div class="btn-group stacked">
+                        <button type="button" class="btn btn-primary" id="pct_view">Percentage View</button>
+                        <button type="button" class="btn btn-primary" id="dollar_view">Dollar View</button>
+                    </div>
+                    <div id="share-pie" class="stacked"></div>
+                </div>
             </div>
-            <div id="chart-performance-day"></div>
-            <div id="share-pie"></div>
-        </div>
-    </div>
-    <p style="font-size: x-small;">Last Update: {{ metrics.last_update }}</p>
-    <hr>
-    <div class="row">
-
-    </div>
-    <div class="row">
-        <div class="col-md-3" id="time_in_box">
-            <div id="time-in-text">
-                <h4>Trading Days</h4>
-                <p>"It's not about timing the market, it's about time in the market"</p>
-                <hr>
+        </div>    
+        <p style="font-size: x-small;">Last Update: {{ metrics.last_update }}</p>
+        <hr>
+        <div class="row">
+            <div class="col-md-3" id="time_in_box">
+                <div id="time-in-text">
+                    <h4>Trading Days</h4>
+                    <p>"It's not about timing the market, it's about time in the market"</p>
+                    <hr>
+                </div>
+                <div id="time-in-days">
+                    {{ metrics.days_in }}
+                </div>
             </div>
-            <div id="time-in-days">
-                {{ metrics.days_in }}
+            <div class="col-md-5" id="gains_box">
+                <table>
+                    <tr class="header_row">
+                        <th>Gain %</th>
+                        <th>Gain $</th>
+                        <th>Mean %</th>
+                        <th>Deviation</th>
+                        <th>CV
+                            <a href="#" data-toggle="tooltip" title="{{ text.cv_explanation }}">?</a>
+                        </th>
+                    </tr>
+                    <tr class="gas_row">
+                        <td>{{ metrics.pct_gain }}</td>
+                        <td>{{ metrics.portfolio_gain }}</td>
+                        <td>{{ metrics.mean_gain }}</td>
+                        <td>{{ metrics.std_dev }}</td>
+                        <td>{{ metrics.cof_var }}</td>
+                    </tr>
+                    <tr class="sp_row">
+                        <td>{{ metrics.sp_pct_gain }}</td>
+                        <td>{{ metrics.sp_gain }}</td>
+                        <td>{{ metrics.sp_mean_gain }}</td>
+                        <td>{{ metrics.sp_std_dev }}</td>
+                        <td>{{ metrics.sp_cof_var }}</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-3" id="metrics_box">
+                <table>
+                    <tr class="header_row">
+                        <th>Invested</th>
+                        <th>Current Value</th>
+                    </tr>
+                    <tr class="gas_row">
+                        <td>{{ metrics.invested }}</td>
+                        <td>{{ metrics.value }}</td>
+                    </tr>
+                </table>
             </div>
         </div>
-        <div class="col-md-5" id="gains_box">
-            <table>
-                <tr class="header_row">
-                    <th>Gain %</th>
-                    <th>Gain $</th>
-                    <th>Mean %</th>
-                    <th>Deviation</th>
-                    <th>CV
-                        <a href="#" data-toggle="tooltip" title="{{ text.cv_explanation }}">?</a>
-                    </th>
-                </tr>
-                <tr class="gas_row">
-                    <td>{{ metrics.pct_gain }}</td>
-                    <td>{{ metrics.portfolio_gain }}</td>
-                    <td>{{ metrics.mean_gain }}</td>
-                    <td>{{ metrics.std_dev }}</td>
-                    <td>{{ metrics.cof_var }}</td>
-                </tr>
-                <tr class="sp_row">
-                    <td>{{ metrics.sp_pct_gain }}</td>
-                    <td>{{ metrics.sp_gain }}</td>
-                    <td>{{ metrics.sp_mean_gain }}</td>
-                    <td>{{ metrics.sp_std_dev }}</td>
-                    <td>{{ metrics.sp_cof_var }}</td>
-                </tr>
-            </table>
-        </div>
-        <div class="col-md-3" id="metrics_box">
-            <table>
-                <tr class="header_row">
-                    <th>Invested</th>
-                    <th>Current Value</th>
-                </tr>
-                <tr class="gas_row">
-                    <td>{{ metrics.invested }}</td>
-                    <td>{{ metrics.value }}</td>
-                </tr>
-            </table>
-        </div>
-    </div>
     <script type="text/javascript" src="{{ url_for('static', filename='js/dash_v2.js') }}"></script>
     <script type="text/javascript">
         $(document).ready(function(){

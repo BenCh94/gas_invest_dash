@@ -2,15 +2,34 @@
 {% block head_files %}
     <script type="text/javascript">
         var shareData = {{ daily_data|tojson }};
-        var shareFin = {{ fin_data|tojson }}
         var ticker = {{ ticker|tojson }}
     </script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
 {% endblock head_files %}
+{% block sidebar_content %}
+    <li class="nav-item">
+        <a class="nav-link" href="/shares/{{ name }}">
+            <span data-feather="Stock related news"></span>
+            {{ name }}
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/shares/{{ name }}/news">
+            <span data-feather="Stock related news"></span>
+            News
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/shares/{{ name }}/financials">
+            <span data-feather="bar-chart-2"></span>
+            Financials
+            </a>
+    </li>
+{% endblock sidebar_content %}
 {% block content %}
     <div class="row">
         <div class="col-md-12" id="share-price-box">
-            <canvas id="share-price-chart" style="height:50%; width:95%"></canvas>
+            <canvas id="share-price-chart"></canvas>
              <div class="btn-group" id="price_charts">
               <button type="button" class="btn btn-outline-success btn-md priceChart" id="1m">1M</butto>
               <button type="button" class="btn btn-outline-success btn-md priceChart" id="6m">6M</button>
@@ -22,15 +41,31 @@
     </div>
     <hr>
     <div class="row">
-        <div class="col-md-4" id="share-revenue-box">
-            <canvas id="share-revenue-chart"></canvas>
+      <div class="col-md-6 share_card">
+            <div class="card card-inverse home_card">
+                <div class="card-block">
+                    <h4 class="card-header">{{ share.name }}</h4>
+                    <table class="card-text share_data_table">
+                        <tr>
+                            <th>Invested</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>$ P/L</th>
+                            <th>% P/L</th>
+                            <th>EPS ($)</th>
+                        </tr>
+                        <tr>
+                            <td>${{ share.invested }}</td>
+                            <td>{{ share.quantity }}</td>
+                            <td>$</td>
+                            <td>$</td>
+                            <td>%</td>
+                            <td></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
         </div>
-        <div class="col-md-4" id="share-costrev-box">
-            <canvas id="share-costrev-chart"></canvas>
-        </div>
-    </div>
-     <div class="row">
-        
     </div>
     <script type="text/javascript" src="{{ url_for('static', filename='js/share_chart.js') }}"></script>
 {% endblock content %}
