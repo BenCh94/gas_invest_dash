@@ -10,7 +10,7 @@
     <li class="nav-item">
         <a class="nav-link" href="/shares/{{ name }}">
             <span data-feather="Stock related news"></span>
-            {{ name }}
+            {{ name }} Overview
         </a>
     </li>
     <li class="nav-item">
@@ -41,28 +41,60 @@
     </div>
     <hr>
     <div class="row">
-      <div class="col-md-6 share_card">
+      <div class="col-md-5 share_card">
             <div class="card card-inverse home_card">
                 <div class="card-block">
-                    <h4 class="card-header">{{ share.name }}</h4>
-                    <table class="card-text share_data_table">
-                        <tr>
-                            <th>Invested</th>
-                            <th>Quantity</th>
-                            <th>Price</th>
-                            <th>$ P/L</th>
-                            <th>% P/L</th>
-                            <th>EPS ($)</th>
-                        </tr>
-                        <tr>
-                            <td>${{ share.invested }}</td>
-                            <td>{{ share.quantity }}</td>
-                            <td>$</td>
-                            <td>$</td>
-                            <td>%</td>
-                            <td></td>
-                        </tr>
-                    </table>
+                    <div class="card-header">
+                        <h4 class="card-title">{{ latest.name }} Latest</h4>
+                        <h6 class="card-subtitle">{{ latest.label }}</h6>
+                    </div>
+                    <div class="card-body">
+                        <table class="card-text share_data_table">
+                            <tr>
+                                <th>Invested</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                                <th>$ P/L</th>
+                                <th>% P/L</th>
+                            </tr>
+                            <tr>
+                                <td>${{ latest.invested }}</td>
+                                <td>{{ latest.quantity }}</td>
+                                <td>${{ latest.close }}</td>
+                                <td>${{ latest.gain_loss }}</td>
+                                <td>%{{ latest.pct_gain }}</td>
+                            </tr>
+                            <tr>
+                                <th>EPS ($)</th>
+                                <th>Change</th>
+                                <th>Volume</th>
+                                <th>High</th>
+                                <th>Low</th>
+                            </tr>
+                            <tr>
+                                <td>{{ latest.eps }}</td>
+                                <td>{{ latest.changePercent }}</td>
+                                <td>{{ latest.volume }}</td>
+                                <td>{{ latest.high }}</td>
+                                <td>{{ latest.low }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5 share_card">
+            <div class="card card-inverse home_card">
+                <div class="card-block">
+                    <div class="card-header">
+                        <h4 class="card-title">Company Info</h4>
+                        <p class="card-subtitle">Exchange: {{ company.exchange }}</p>
+                    </div>
+                    <div class="card-body">
+                        <p>Industry: {{ company.industry }} | Sector: {{ company.sector }} | CEO: {{ company.CEO }}</p>
+                        <p>{{ company.description }}</p>
+                        <a href="{{ company.website }}" class="btn btn-primary" target="_blank">Go To Website</a>
+                    </div>
                 </div>
             </div>
         </div>

@@ -153,6 +153,14 @@ def get_share_news(ticker):
     return news_list
 
 
+def get_share_company(ticker):
+    """Function gets company details from IEX API"""
+    stock_comp = "/stock/" + ticker + "/company"
+    ticker_comp = requests.get(IEX_BASE+stock_comp)
+    comp = ticker_comp.json()
+    return comp
+
+
 def remove_from_share(ticker, date, fees):
     format_date = datetime.datetime.strptime(date, "%d/%m/%Y")
     share_object = Share.objects(ticker=ticker).get()
@@ -168,6 +176,19 @@ def remove_from_share(ticker, date, fees):
     return share_object.update(status='Inactive', out_fees=fees, historical=updated_historical)
 
 
+def share_latest(ticker):
+    """Function return the latest data on share"""
+    share_object = Share.objects(ticker=ticker).get()
+    historical = share_object.historical
+    historical_df = pd.DataFrame(historical['daily_data'])
+    historical_df = historical_df.T
+    historical_df['date'] = pd.to_datetime(historical_df.index)
+    latest_data = historical_df.loc[historical_df['date'].idxmax()]
+    latest = latest_data.to_dict()
+    latest['gain_loss'] =  round((latest['close']*latest['quantity']) - (latest['invested']), 2)
+    latest['pct_gain'] = round((latest['gain_loss']/latest['invested'])*100, 2)
+    latest['eps'] = round(latest['gain_loss']/latest['quantity'], 2)
+    return latest
 
 
 # Function is broken needs to be rewritten
