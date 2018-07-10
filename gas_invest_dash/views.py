@@ -89,7 +89,8 @@ def share_page(share_name):
     daily_data = get_share_dailys(name)
     latest = share_latest(ticker)
     company = get_share_company(ticker)
-    return render_template('share_page.html', daily_data=daily_data, ticker=ticker, name=name, latest=latest, company=company)
+    logo = get_share_logo(ticker)
+    return render_template('share_page.html', daily_data=daily_data, ticker=ticker, name=name, latest=latest, company=company, logo=logo)
 
 
 @app.route('/shares/<share_name>/news')

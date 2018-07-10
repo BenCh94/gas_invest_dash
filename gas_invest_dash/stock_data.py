@@ -191,6 +191,14 @@ def share_latest(ticker):
     return latest
 
 
+def get_share_logo(ticker):
+    """ Function retrieves logo from IEX """
+    stock_logo_url = "/stock/" + ticker + "/logo"
+    ticker_logo = requests.get(IEX_BASE+stock_logo_url)
+    logo = ticker_logo.json()
+    return logo['url']
+
+
 # Function is broken needs to be rewritten
 # def add_to_share(share_name, date, qty, amount, fees):
 #     # Do not use this function until it has been tested
