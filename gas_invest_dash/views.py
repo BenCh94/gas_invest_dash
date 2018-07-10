@@ -1,5 +1,5 @@
 from gas_invest_dash import app
-from flask import Flask, render_template, request, flash, redirect, url_for
+from flask import Flask, render_template, request, flash, redirect, url_for, session
 from flask_httpauth import HTTPBasicAuth
 import gas_invest_dash.db_models as db_models
 from flask_mongoengine.wtf import model_form
@@ -18,6 +18,8 @@ from gas_invest_dash.stock_data import *
 users = {
     "Bench94": os.environ.get('BasicPass')
 }
+
+app.secret_key = os.environ.get('secret_key')
 
 auth = HTTPBasicAuth()
 
@@ -85,7 +87,9 @@ def share_page(share_name):
     ticker = share_object.ticker
     # Pull share data from DB
     daily_data = get_share_dailys(name)
-    return render_template('share_page.html', daily_data=daily_data, ticker=ticker, name=name, share=share_object)
+    latest = share_latest(ticker)
+    company = get_share_company(ticker)
+    return render_template('share_page.html', daily_data=daily_data, ticker=ticker, name=name, latest=latest, company=company)
 
 
 @app.route('/shares/<share_name>/news')
