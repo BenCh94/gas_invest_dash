@@ -69,7 +69,7 @@ var sharePieChart = dc.pieChart('#share-pie');
 
 var makeGraphs = function(sp_vals, gas_vals){
 	dailyChart
-		.width(dailyWidth*0.8).height(pageHeight*0.5)
+		.width(dailyWidth*0.75).height(pageHeight*0.5)
 		.title(function(d) {return d.key + ":" + d.value})
 		.compose([
 			dc.lineChart(dailyChart)
@@ -90,7 +90,7 @@ var makeGraphs = function(sp_vals, gas_vals){
 		.x(d3.time.scale().domain([minDate, maxDate]));
 
 	sharePieChart
-	    .width(300).height(400)
+	    .width(dailyWidth*0.2).height(400)
 	    .dimension(shareDim)
 	    .group(share_invested)
 	    .colors(colorScale)
